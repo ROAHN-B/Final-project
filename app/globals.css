@@ -1,0 +1,342 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  /* New warm, agricultural-inspired color palette removing dark mode */
+  --background: oklch(0.98 0.01 85); /* Warm cream background */
+  --foreground: oklch(0.25 0.08 142); /* Deep forest green for text */
+  --card: oklch(1 0 0); /* Pure white for cards */
+  --card-foreground: oklch(0.25 0.08 142); /* Dark green for card text */
+  --popover: oklch(1 0 0); /* White popover background */
+  --popover-foreground: oklch(0.25 0.08 142); /* Dark text on white */
+  --primary: oklch(0.45 0.12 142); /* Rich forest green for primary actions */
+  --primary-foreground: oklch(1 0 0); /* White text on green */
+  --secondary: oklch(0.92 0.02 85); /* Light golden beige for secondary elements */
+  --secondary-foreground: oklch(0.25 0.08 142); /* Dark text on light background */
+  --muted: oklch(0.95 0.02 85); /* Very light golden for muted elements */
+  --muted-foreground: oklch(0.45 0.04 142); /* Medium green for muted text */
+  --accent: oklch(0.75 0.15 85); /* Warm golden yellow for highlights */
+  --accent-foreground: oklch(0.25 0.08 142); /* Dark text on golden */
+  --destructive: oklch(0.55 0.22 25); /* Red for errors */
+  --destructive-foreground: oklch(1 0 0); /* White text on red */
+  --border: oklch(0.88 0.02 85); /* Light golden borders */
+  --input: oklch(1 0 0); /* White input backgrounds */
+  --ring: oklch(0.45 0.12 142); /* Forest green focus rings */
+  --chart-1: oklch(0.45 0.12 142); /* Primary green for charts */
+  --chart-2: oklch(0.75 0.15 85); /* Golden yellow for charts */
+  --chart-3: oklch(0.65 0.08 142); /* Medium green for charts */
+  --chart-4: oklch(0.55 0.02 85); /* Warm gray for charts */
+  --chart-5: oklch(0.55 0.22 25); /* Red for negative data */
+  --radius: 0.75rem; /* Softer rounding for modern feel */
+  --sidebar: oklch(0.98 0.01 85); /* Light cream sidebar */
+  --sidebar-foreground: oklch(0.25 0.08 142); /* Dark green sidebar text */
+  --sidebar-primary: oklch(0.75 0.15 85); /* Golden accent in sidebar */
+  --sidebar-primary-foreground: oklch(0.25 0.08 142); /* Dark text on golden */
+  --sidebar-accent: oklch(0.45 0.12 142); /* Green accent in sidebar */
+  --sidebar-accent-foreground: oklch(1 0 0); /* White text on green */
+  --sidebar-border: oklch(0.88 0.02 85); /* Light golden borders */
+  --sidebar-ring: oklch(0.45 0.12 142); /* Green focus rings */
+}
+
+/* Removed all dark mode styles completely */
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /* Enhanced typography and spacing for better readability */
+  html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    font-weight: 400;
+  }
+
+  /* Improved focus styles for better accessibility */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+
+  /* Enhanced transitions for smoother interactions */
+  button,
+  a,
+  [role="button"] {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  /* Better typography hierarchy */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  h3 {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  /* Improved paragraph spacing and readability */
+  p {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+    color: var(--muted-foreground);
+  }
+
+  /* Better text balance for optimal line breaks */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Enhanced animations with agricultural theme */
+  .pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse-glow {
+    from {
+      box-shadow: 0 0 20px rgba(69, 90, 22, 0.2);
+    }
+    to {
+      box-shadow: 0 0 40px rgba(69, 90, 22, 0.4);
+    }
+  }
+
+  .float-animation {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* Modern gradient text effect */
+  .gradient-text {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: var(--primary);
+  }
+
+  /* Soft glass morphism effect */
+  .glass-effect {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Improved scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--muted);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+  }
+
+  /* Enhanced text selection styling */
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  ::-moz-selection {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* Better form element styling */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+    border-radius: var(--radius);
+  }
+
+  button {
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    border-radius: var(--radius);
+  }
+
+  /* Enhanced card styling */
+  .card {
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease-out;
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  /* Better contrast for muted text */
+  .text-muted-foreground {
+    opacity: 0.85;
+  }
+}
+
+/* Enhanced utility classes for better animations */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.9s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Enhanced responsive typography utilities */
+  .text-responsive {
+    font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+  }
+
+  .heading-responsive {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  /* Better line clamping utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Spacing utilities for better layouts */
+  .section-padding {
+    padding: clamp(2rem, 5vw, 4rem) 0;
+  }
+
+  .container-padding {
+    padding-left: clamp(1rem, 4vw, 2rem);
+    padding-right: clamp(1rem, 4vw, 2rem);
+  }
+}
