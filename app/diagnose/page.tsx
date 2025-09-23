@@ -189,11 +189,6 @@ const diagnosisLanguages: Record<string, any> = {
         uploadCard: "मिट्टी स्वास्थ्य कार्ड अपलोड करें",
         enterAadhaar: "आधार नंबर दर्ज करें",
         linkAadhaar: "आधार से लिंक करें",
-        soilParameters: "मिट्टी के पैरामीटर",
-        locationDetails: "स्थान विवरण",
-        selectState: "राज्य चुनें",
-        selectDistrict: "जिला चुनें",
-        selectCity: "शहर/गांव चुनें",
         manualEntry: "मैन्युअल मिट्टी डेटा प्रविष्टि",
         severity: {
             low: "कम जोखिम",
@@ -606,7 +601,8 @@ export default function CropDiagnosis() {
                                             <div className="text-sm text-muted-foreground">or</div>
                                             <Button variant="outline" size="lg" onClick={() => fileInputRef.current?.click()} className="w-full sm:w-auto"><Upload className="mr-2 h-5 w-5" />{t.uploadImage}</Button>
                                         </div>
-                                        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleCropImageUpload} className="hidden" capture="environment" />
+                                        {/* FIX: Removed capture="environment" */}
+                                        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleCropImageUpload} className="hidden" />
                                     </CardContent>
                                 </Card>
                                 <Card>
@@ -838,4 +834,3 @@ export default function CropDiagnosis() {
         </div>
     )
 }
-
