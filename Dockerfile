@@ -1,7 +1,7 @@
 # Dockerfile
 
-# 1. Builder Stage: Build the Next.js application
-FROM node:18-alpine AS builder
+# 1. Builder Stage: Use Node.js 20
+FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Install pnpm
@@ -31,7 +31,7 @@ ENV NEXT_PUBLIC_GEMINI_API_KEY_CHATBOT=${NEXT_PUBLIC_GEMINI_API_KEY_CHATBOT}
 RUN npm run build
 
 # 2. Runner Stage: Create the final, lean production image
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 # Install pnpm in the runner stage
