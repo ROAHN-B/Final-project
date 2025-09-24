@@ -370,7 +370,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     update: "UPDATE",
     dashboard: {
       title: "KrishiMitra Dashboard",
-      welcome: "Welcome back,",
+      welcome: "Welcome back",
       welcomeSubtitle: "How can we help you farm smarter today?",
       voicePrompt: "Tap to speak your question",
       quickActions: "Quick Actions",
@@ -557,7 +557,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     update: "अपडेट करें",
     dashboard: {
       title: "कृषिमित्र डैशबोर्ड",
-      welcome: "वापसी पर स्वागत है,",
+      welcome: "वापसी पर स्वागत है",
       welcomeSubtitle: "आज हम आपकी खेती को बेहतर बनाने में कैसे मदद कर सकते हैं?",
       voicePrompt: "अपना प्रश्न बोलने के लिए टैप करें",
       quickActions: "त्वरित कार्रवाइयां",
@@ -743,7 +743,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     update: "अपडेट करा",
     dashboard: {
       title: "कृषीमित्र डॅशबोर्ड",
-      welcome: "परत स्वागत आहे,",
+      welcome: "परत स्वागत आहे",
       welcomeSubtitle: "आज आम्ही तुमच्या शेतीला अधिक स्मार्ट बनवण्यासाठी कशी मदत करू शकतो?",
       voicePrompt: "तुमचा प्रश्न बोलण्यासाठी टॅप करा",
       quickActions: "त्वरित क्रिया",
@@ -929,7 +929,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     update: "ਅੱਪਡੇਟ ਕਰੋ",
     dashboard: {
       title: "ਕ੍ਰਿਸ਼ੀਮਿੱਤਰ ਡੈਸ਼ਬੋਰਡ",
-      welcome: "ਜੀ ਆਇਆਂ ਨੂੰ,",
+      welcome: "ਜੀ ਆਇਆਂ ਨੂੰ",
       welcomeSubtitle: "ਅੱਜ ਅਸੀਂ ਤੁਹਾਡੀ ਖੇਤੀ ਨੂੰ ਬਿਹਤਰ ਬਣਾਉਣ ਵਿੱਚ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?",
       voicePrompt: "ਆਪਣਾ ਸਵਾਲ ਬੋਲਣ ਲਈ ਟੈਪ ਕਰੋ",
       quickActions: "ਤੁਰੰਤ ਕਾਰਵਾਈਆਂ",
@@ -1115,7 +1115,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     update: "ಅಪ್‌ಡೇಟ್ ಮಾಡಿ",
     dashboard: {
       title: "ಕೃಷಿಮಿತ್ರ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
-      welcome: "ಮತ್ತೆ ಸ್ವಾಗತ,",
+      welcome: "ಮತ್ತೆ ಸ್ವಾಗತ",
       welcomeSubtitle: "ಇಂದು ನಾವು ನಿಮ್ಮ ಕೃಷಿಯನ್ನು ಉತ್ತಮಗೊಳಿಸಲು ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?",
       voicePrompt: "ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಹೇಳಲು ಟ್ಯಾಪ್ ಮಾಡಿ",
       quickActions: "ತ್ವರಿತ ಕ್ರಿಯೆಗಳು",
@@ -1301,7 +1301,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     update: "புதுப்பிக்கவும்",
     dashboard: {
       title: "கிருஷிமித்ரா டாஷ்போர்டு",
-      welcome: "மீண்டும் வரவேற்கிறோம்,",
+      welcome: "மீண்டும் வரவேற்கிறோம்",
       welcomeSubtitle: "இன்று உங்கள் விவசாயத்தை சிறந்ததாக்க நாங்கள் எப்படி உதவ முடியும்?",
       voicePrompt: "உங்கள் கேள்வியைச் சொல்ல தட்டவும்",
       quickActions: "விரைவு செயல்கள்",

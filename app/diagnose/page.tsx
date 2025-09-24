@@ -38,7 +38,8 @@ import {
     XCircle,
     ShoppingCart,
     ExternalLink,
-    ChevronsRight
+    ChevronsRight,
+    Search
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
@@ -109,6 +110,10 @@ interface StructuredGuidance {
     actionable_steps: string[];
 }
 
+interface Lab {
+    name: string;
+    address: string;
+}
 
 const diagnosisLanguages: Record<string, any> = {
     en: {
@@ -126,51 +131,37 @@ const diagnosisLanguages: Record<string, any> = {
         hasCard: "I have Soil Health Card",
         noCard: "I don't have Soil Health Card",
         uploadCard: "Upload Soil Health Card",
-        enterAadhaar: "Enter Aadhaar Number",
-        linkAadhaar: "Link with Aadhaar",
-        soilParameters: "Soil Parameters",
-        locationDetails: "Location Details",
-        selectState: "Select State",
-        selectDistrict: "Select District",
-        selectCity: "Select City/Village",
         manualEntry: "Manual Soil Data Entry",
-        severity: {
-            low: "Low Risk",
-            medium: "Medium Risk",
-            high: "High Risk",
-        },
+        severity: { low: "Low Risk", medium: "Medium Risk", high: "High Risk" },
         actions: {
             retake: "Take Another Photo",
             speakResults: "Listen to Results",
             getHelp: "Get Expert Help",
             back: "Back",
-            submitData: "Submit Data",
             getGuidance: "Get Guidance",
             cancel: "Cancel"
         },
         soilData: {
-            ph: "pH Level",
-            nitrogen: "Nitrogen (N)",
-            phosphorus: "Phosphorus (P)",
-            potassium: "Potassium (K)",
-            organicCarbon: "Organic Carbon",
-            sulfur: "Sulfur (S)",
-            zinc: "Zinc (Zn)",
-            boron: "Boron (B)",
-            iron: "Iron (Fe)",
-            manganese: "Manganese (Mn)",
-            ec: "Conductivity (EC)",
-            calcium: "Calcium (Ca)",
-            magnesium: "Magnesium (Mg)",
-            cu: "Copper (Cu)",
+            ph: "pH Level", nitrogen: "Nitrogen (N)", phosphorus: "Phosphorus (P)", potassium: "Potassium (K)",
+            organicCarbon: "Organic Carbon", sulfur: "Sulfur (S)", zinc: "Zinc (Zn)", boron: "Boron (B)",
+            iron: "Iron (Fe)", manganese: "Manganese (Mn)", ec: "Conductivity (EC)", calcium: "Calcium (Ca)",
+            magnesium: "Magnesium (Mg)", cu: "Copper (Cu)"
         },
         tips: {
             photoTips: "Photo Tips",
             tip1: "Take photos in good natural light",
             tip2: "Focus on affected areas clearly",
             tip3: "Include healthy parts for comparison",
-            tip4: "Avoid shadows and blur",
+            tip4: "Avoid shadows and blur"
         },
+        labFinder: {
+            title: "Find a Soil Testing Lab",
+            description: "To get a Soil Health Card, please visit one of the nearest government-approved laboratories.",
+            findingLabs: "Finding nearby labs using your location...",
+            locationError: "Could not access your location. Please enable location services in your browser settings or enter data manually.",
+            noLabsFound: "No government labs found nearby. Please try searching online or enter data manually.",
+            enterManuallyButton: "Enter Data Manually Instead"
+        }
     },
     hi: {
         title: "फसल सलाह और मिट्टी स्वास्थ्य",
@@ -187,48 +178,39 @@ const diagnosisLanguages: Record<string, any> = {
         hasCard: "मेरे पास मिट्टी स्वास्थ्य कार्ड है",
         noCard: "मेरे पास मिट्टी स्वास्थ्य कार्ड नहीं है",
         uploadCard: "मिट्टी स्वास्थ्य कार्ड अपलोड करें",
-        enterAadhaar: "आधार नंबर दर्ज करें",
-        linkAadhaar: "आधार से लिंक करें",
         manualEntry: "मैन्युअल मिट्टी डेटा प्रविष्टि",
-        severity: {
-            low: "कम जोखिम",
-            medium: "मध्यम जोखिम",
-            high: "उच्च जोखिम",
-        },
+        severity: { low: "कम जोखिम", medium: "मध्यम जोखिम", high: "उच्च जोखिम" },
         actions: {
             retake: "दूसरी फोटो लें",
             speakResults: "परिणाम सुनें",
             getHelp: "विशेषज्ञ सहायता लें",
             back: "वापस",
-            submitData: "डेटा जमा करें",
             getGuidance: "सलाह प्राप्त करें",
             cancel: "रद्द करें"
         },
         soilData: {
-            ph: "pH स्तर",
-            nitrogen: "नाइट्रोजन (N)",
-            phosphorus: "फास्फोरस (P)",
-            potassium: "पोटेशियम (K)",
-            organicCarbon: "जैविक कार्बन",
-            sulfur: "सल्फर (S)",
-            zinc: "जिंक (Zn)",
-            boron: "बोरॉन (B)",
-            iron: "आयरन (Fe)",
-            manganese: "मैंगनीज (Mn)",
-            ec: "चालकता (EC)",
-            calcium: "कैल्शियम (Ca)",
-            magnesium: "मैग्नीशियम (Mg)",
-            cu: "तांबा (Cu)",
+            ph: "pH स्तर", nitrogen: "नाइट्रोजन (N)", phosphorus: "फास्फोरस (P)", potassium: "पोटेशियम (K)",
+            organicCarbon: "जैविक कार्बन", sulfur: "सल्फर (S)", zinc: "जिंक (Zn)", boron: "बोरॉन (B)",
+            iron: "आयरन (Fe)", manganese: "मैंगनीज (Mn)", ec: "चालकता (EC)", calcium: "कैल्शियम (Ca)",
+            magnesium: "मैग्नीशियम (Mg)", cu: "तांबा (Cu)"
         },
         tips: {
             photoTips: "फोटो टिप्स",
             tip1: "अच्छी प्राकृतिक रोशनी में फोटो लें",
             tip2: "प्रभावित क्षेत्रों पर स्पष्ट रूप से ध्यान दें",
             tip3: "तुलना के लिए स्वस्थ भागों को शामिल करें",
-            tip4: "छाया और धुंधलेपन से बचें",
+            tip4: "छाया और धुंधलेपन से बचें"
         },
+        labFinder: {
+            title: "मिट्टी परीक्षण प्रयोगशाला खोजें",
+            description: "मिट्टी स्वास्थ्य कार्ड प्राप्त करने के लिए, कृपया निकटतम सरकारी-अनुमोदित प्रयोगशालाओं में से किसी एक पर जाएँ।",
+            findingLabs: "आपके स्थान का उपयोग करके आस-पास की प्रयोगशालाएं खोजी जा रही हैं...",
+            locationError: "आपका स्थान एक्सेस नहीं हो सका। कृपया अपनी ब्राउज़र सेटिंग्स में स्थान सेवाएं सक्षम करें या मैन्युअल रूप से डेटा दर्ज करें।",
+            noLabsFound: "आस-पास कोई सरकारी प्रयोगशाला नहीं मिली। कृपया ऑनलाइन खोजने का प्रयास करें या मैन्युअल रूप से डेटा दर्ज करें।",
+            enterManuallyButton: "इसके बजाय मैन्युअल रूप से डेटा दर्ज करें"
+        }
     },
-	mr: {
+    mr: {
         title: "पीक सल्ला आणि मातीचे आरोग्य",
         subtitle: "मातीच्या आरोग्याच्या एकात्मिकतेसह AI-चालित पीक विश्लेषण",
         uploadPrompt: "तुमच्या पिकाचा फोटो घ्या किंवा इमेज अपलोड करा",
@@ -243,46 +225,37 @@ const diagnosisLanguages: Record<string, any> = {
         hasCard: "माझ्याकडे मृदा आरोग्य पत्रिका आहे",
         noCard: "माझ्याकडे मृदा आरोग्य पत्रिका नाही",
         uploadCard: "मृदा आरोग्य पत्रिका अपलोड करा",
-        enterAadhaar: "आधार क्रमांक टाका",
-        linkAadhaar: "आधारशी लिंक करा",
         manualEntry: "मॅन्युअल माती डेटा एंट्री",
-        severity: {
-            low: "कमी धोका",
-            medium: "मध्यम धोका",
-            high: "उच्च धोका",
-        },
+        severity: { low: "कमी धोका", medium: "मध्यम धोका", high: "उच्च धोका" },
         actions: {
             retake: "दुसरा फोटो घ्या",
             speakResults: "निकाल ऐका",
             getHelp: "तज्ञांची मदत घ्या",
             back: "मागे",
-            submitData: "माहिती सादर करा",
             getGuidance: "मार्गदर्शन मिळवा",
             cancel: "रद्द करा"
         },
         soilData: {
-            ph: "pH पातळी",
-            nitrogen: "नायट्रोजन (N)",
-            phosphorus: "फॉस्फरस (P)",
-            potassium: "पोटॅशियम (K)",
-            organicCarbon: "सेंद्रिय कर्ब",
-            sulfur: "गंधक (S)",
-            zinc: "जस्त (Zn)",
-            boron: "बोरॉन (B)",
-            iron: "लोह (Fe)",
-            manganese: "मॅंगनीज (Mn)",
-            ec: "विद्युत चालकता (EC)",
-            calcium: "कॅल्शियम (Ca)",
-            magnesium: "मॅग्नेशियम (Mg)",
-            cu: "तांबे (Cu)",
+            ph: "pH पातळी", nitrogen: "नायट्रोजन (N)", phosphorus: "फॉस्फरस (P)", potassium: "पोटॅशियम (K)",
+            organicCarbon: "सेंद्रिय कर्ब", sulfur: "गंधक (S)", zinc: "जस्त (Zn)", boron: "बोरॉन (B)",
+            iron: "लोह (Fe)", manganese: "मॅंगनीज (Mn)", ec: "विद्युत चालकता (EC)", calcium: "कॅल्शियम (Ca)",
+            magnesium: "मॅग्नेशियम (Mg)", cu: "तांबे (Cu)"
         },
         tips: {
             photoTips: "फोटो टिप्स",
             tip1: "चांगल्या नैसर्गिक प्रकाशात फोटो घ्या",
             tip2: "प्रभावित भागांवर स्पष्टपणे लक्ष केंद्रित करा",
             tip3: "तुलनेसाठी निरोगी भाग समाविष्ट करा",
-            tip4: "सावली आणि अस्पष्टता टाळा",
+            tip4: "सावली आणि अस्पष्टता टाळा"
         },
+        labFinder: {
+            title: "माती परीक्षण प्रयोगशाळा शोधा",
+            description: "मृदा आरोग्य पत्रिका मिळवण्यासाठी, कृपया जवळच्या सरकारी-मान्यताप्राप्त प्रयोगशाळांपैकी एकाला भेट द्या.",
+            findingLabs: "तुमचे स्थान वापरून जवळच्या प्रयोगशाळा शोधत आहे...",
+            locationError: "तुमचे स्थान मिळवू शकलो नाही. कृपया तुमच्या ब्राउझर सेटिंग्जमध्ये स्थान सेवा सक्षम करा किंवा व्यक्तिचलितपणे डेटा प्रविष्ट करा.",
+            noLabsFound: "जवळपास कोणतीही सरकारी प्रयोगशाळा आढळली नाही. कृपया ऑनलाइन शोधण्याचा प्रयत्न करा किंवा व्यक्तिचलितपणे डेटा प्रविष्ट करा.",
+            enterManuallyButton: "त्याऐवजी व्यक्तिचलितपणे डेटा प्रविष्ट करा"
+        }
     },
     pa: {
         title: "ਫਸਲ ਸਲਾਹ ਅਤੇ ਮਿੱਟੀ ਦੀ ਸਿਹਤ",
@@ -299,46 +272,37 @@ const diagnosisLanguages: Record<string, any> = {
         hasCard: "ਮੇਰੇ ਕੋਲ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਹੈ",
         noCard: "ਮੇਰੇ ਕੋਲ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਨਹੀਂ ਹੈ",
         uploadCard: "ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਅਪਲੋਡ ਕਰੋ",
-        enterAadhaar: "ਆਧਾਰ ਨੰਬਰ ਦਾਖਲ ਕਰੋ",
-        linkAadhaar: "ਆਧਾਰ ਨਾਲ ਲਿੰਕ ਕਰੋ",
         manualEntry: "ਮੈਨੂਅਲ ਮਿੱਟੀ ਡਾਟਾ ਐਂਟਰੀ",
-        severity: {
-            low: "ਘੱਟ ਖਤਰਾ",
-            medium: "ਦਰਮਿਆਨਾ ਖਤਰਾ",
-            high: "ਉੱਚ ਖਤਰਾ",
-        },
+        severity: { low: "ਘੱਟ ਖਤਰਾ", medium: "ਦਰਮਿਆਨਾ ਖਤਰਾ", high: "ਉੱਚ ਖਤਰਾ" },
         actions: {
             retake: "ਇਕ ਹੋਰ ਫੋਟੋ ਲਓ",
             speakResults: "ਨਤੀਜੇ ਸੁਣੋ",
             getHelp: "ਮਾਹਰ ਦੀ ਮਦਦ ਲਓ",
             back: "ਪਿੱਛੇ",
-            submitData: "ਡਾਟਾ ਜਮ੍ਹਾਂ ਕਰੋ",
             getGuidance: "ਮਾਰਗਦਰਸ਼ਨ ਪ੍ਰਾਪਤ ਕਰੋ",
             cancel: "ਰੱਦ ਕਰੋ"
         },
         soilData: {
-            ph: "pH ਪੱਧਰ",
-            nitrogen: "ਨਾਈਟ੍ਰੋਜਨ (N)",
-            phosphorus: "ਫਾਸਫੋਰਸ (P)",
-            potassium: "ਪੋਟਾਸ਼ੀਅਮ (K)",
-            organicCarbon: "ਜੈਵਿਕ ਕਾਰਬਨ",
-            sulfur: "ਸਲਫਰ (S)",
-            zinc: "ਜ਼ਿੰਕ (Zn)",
-            boron: "ਬੋਰੋਨ (B)",
-            iron: "ਆਇਰਨ (Fe)",
-            manganese: "ਮੈਂਗਨੀਜ਼ (Mn)",
-            ec: "ਚਾਲਕਤਾ (EC)",
-            calcium: "ਕੈਲਸ਼ੀਅਮ (Ca)",
-            magnesium: "ਮੈਗਨੀਸ਼ੀਅਮ (Mg)",
-            cu: "ਤਾਂਬਾ (Cu)",
+            ph: "pH ਪੱਧਰ", nitrogen: "ਨਾਈਟ੍ਰੋਜਨ (N)", phosphorus: "ਫਾਸਫੋਰਸ (P)", potassium: "ਪੋਟਾਸ਼ੀਅਮ (K)",
+            organicCarbon: "ਜੈਵਿਕ ਕਾਰਬਨ", sulfur: "ਸਲਫਰ (S)", zinc: "ਜ਼ਿੰਕ (Zn)", boron: "ਬੋਰੋਨ (B)",
+            iron: "ਆਇਰਨ (Fe)", manganese: "ਮੈਂਗਨੀਜ਼ (Mn)", ec: "ਚਾਲਕਤਾ (EC)", calcium: "ਕੈਲਸ਼ੀਅਮ (Ca)",
+            magnesium: "ਮੈਗਨੀਸ਼ੀਅਮ (Mg)", cu: "ਤਾਂਬਾ (Cu)"
         },
         tips: {
             photoTips: "ਫੋਟੋ ਸੁਝਾਅ",
             tip1: "ਚੰਗੀ ਕੁਦਰਤੀ ਰੌਸ਼ਨੀ ਵਿੱਚ ਫੋਟੋਆਂ ਲਓ",
             tip2: "ਪ੍ਰਭਾਵਿਤ ਖੇਤਰਾਂ 'ਤੇ ਸਪਸ਼ਟ ਤੌਰ 'ਤੇ ਧਿਆਨ ਕੇਂਦਰਤ ਕਰੋ",
             tip3: "ਤੁਲਨਾ ਲਈ ਸਿਹਤਮੰਦ ਹਿੱਸੇ ਸ਼ਾਮਲ ਕਰੋ",
-            tip4: "ਪਰਛਾਵੇਂ ਅਤੇ ਧੁੰਦਲੇਪਣ ਤੋਂ ਬਚੋ",
+            tip4: "ਪਰਛਾਵੇਂ ਅਤੇ ਧੁੰਦਲੇਪਣ ਤੋਂ ਬਚੋ"
         },
+        labFinder: {
+            title: "ਮਿੱਟੀ ਪਰਖ ਪ੍ਰਯੋਗਸ਼ਾਲਾ ਲੱਭੋ",
+            description: "ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ, ਕਿਰਪਾ ਕਰਕੇ ਨਜ਼ਦੀਕੀ ਸਰਕਾਰੀ-ਪ੍ਰਵਾਨਿਤ ਪ੍ਰਯੋਗਸ਼ਾਲਾਵਾਂ ਵਿੱਚੋਂ ਕਿਸੇ ਇੱਕ 'ਤੇ ਜਾਓ।",
+            findingLabs: "ਤੁਹਾਡੇ ਸਥਾਨ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਨੇੜਲੀਆਂ ਪ੍ਰਯੋਗਸ਼ਾਲਾਵਾਂ ਲੱਭ ਰਿਹਾ ਹੈ...",
+            locationError: "ਤੁਹਾਡਾ ਸਥਾਨ ਐਕਸੈਸ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀਆਂ ਬ੍ਰਾਊਜ਼ਰ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਸਥਾਨ ਸੇਵਾਵਾਂ ਨੂੰ ਸਮਰੱਥ ਕਰੋ ਜਾਂ ਹੱਥੀਂ ਡਾਟਾ ਦਾਖਲ ਕਰੋ।",
+            noLabsFound: "ਨੇੜੇ ਕੋਈ ਸਰਕਾਰੀ ਪ੍ਰਯੋਗਸ਼ਾਲਾ ਨਹੀਂ ਮਿਲੀ। ਕਿਰਪਾ ਕਰਕੇ ਔਨਲਾਈਨ ਖੋਜਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ ਜਾਂ ਹੱਥੀਂ ਡਾਟਾ ਦਾਖਲ ਕਰੋ।",
+            enterManuallyButton: "ਇਸਦੀ ਬਜਾਏ ਹੱਥੀਂ ਡਾਟਾ ਦਾਖਲ ਕਰੋ"
+        }
     },
     kn: {
         title: "ಬೆಳೆ ಸಲಹೆ ಮತ್ತು ಮಣ್ಣಿನ ಆರೋಗ್ಯ",
@@ -349,52 +313,43 @@ const diagnosisLanguages: Record<string, any> = {
         analyzing: "ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
         results: "ರೋಗನಿರ್ಣಯದ ಫಲಿತಾಂಶಗಳು",
         confidence: "ವಿಶ್ವಾಸದ ಮಟ್ಟ",
-        recommendations: "ಶಿಫಾರಸುಗಳು",
+        recommendations: "ಶಿಫਾਰಸುಗಳು",
         soilHealth: "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ವಿಶ್ಲೇಷಣೆ",
         soilHealthCard: "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್",
         hasCard: "ನನ್ನ ಬಳಿ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಇದೆ",
         noCard: "ನನ್ನ ಬಳಿ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಇಲ್ಲ",
         uploadCard: "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
-        enterAadhaar: "ಆಧಾರ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
-        linkAadhaar: "ಆಧಾರ್‌ನೊಂದಿಗೆ ಲಿಂಕ್ ಮಾಡಿ",
         manualEntry: "ಕೈಪಿಡಿ ಮಣ್ಣಿನ ಡೇಟಾ ನಮೂದು",
-        severity: {
-            low: "ಕಡಿಮೆ ಅಪಾಯ",
-            medium: "ಮಧ್ಯಮ ಅಪಾಯ",
-            high: "ಹೆಚ್ಚಿನ ಅಪಾಯ",
-        },
+        severity: { low: "ಕಡಿಮೆ ಅಪಾಯ", medium: "ಮಧ್ಯಮ ಅಪಾಯ", high: "ಹೆಚ್ಚಿನ ಅಪಾಯ" },
         actions: {
             retake: "ಮತ್ತೊಂದು ಫೋಟೋ ತೆಗೆ",
             speakResults: "ಫಲಿತಾಂಶಗಳನ್ನು ಆಲಿಸಿ",
             getHelp: "ತಜ್ಞರ ಸಹಾಯ ಪಡೆಯಿರಿ",
             back: "ಹಿಂದೆ",
-            submitData: "ಡೇಟಾ ಸಲ್ಲಿಸಿ",
             getGuidance: "ಮಾರ್ಗದರ್ಶನ ಪಡೆಯಿರಿ",
             cancel: "ರದ್ದುಮಾಡು"
         },
         soilData: {
-            ph: "pH ಮಟ್ಟ",
-            nitrogen: "ಸಾರಜನಕ (N)",
-            phosphorus: "ರಂಜಕ (P)",
-            potassium: "ಪೊಟ್ಯಾಸಿಯಮ್ (K)",
-            organicCarbon: "ಸಾವಯವ ಇಂಗಾಲ",
-            sulfur: "ಗಂಧಕ (S)",
-            zinc: "ಸತು (Zn)",
-            boron: "ಬೋರಾನ್ (B)",
-            iron: "ಕಬ್ಬಿಣ (Fe)",
-            manganese: "ಮ್ಯಾಂಗನೀಸ್ (Mn)",
-            ec: "ವಾಹಕತೆ (EC)",
-            calcium: "ಕ್ಯಾಲ್ಸಿಯಂ (Ca)",
-            magnesium: "ಮೆಗ್ನೀಸಿಯಮ್ (Mg)",
-            cu: "ತಾಮ್ರ (Cu)",
+            ph: "pH ಮಟ್ಟ", nitrogen: "ಸಾರಜನಕ (N)", phosphorus: "ರಂಜಕ (P)", potassium: "ಪೊಟ್ಯಾಸಿಯಮ್ (K)",
+            organicCarbon: "ಸಾವಯವ ಇಂಗಾಲ", sulfur: "ಗಂಧಕ (S)", zinc: "ಸತು (Zn)", boron: "ಬೋರಾನ್ (B)",
+            iron: "ಕಬ್ಬಿಣ (Fe)", manganese: "ಮ್ಯಾಂಗನೀಸ್ (Mn)", ec: "ವಾಹಕತೆ (EC)", calcium: "ಕ್ಯಾಲ್ಸಿಯಂ (Ca)",
+            magnesium: "ಮೆಗ್ನೀಸಿಯಮ್ (Mg)", cu: "ತಾಮ್ರ (Cu)"
         },
         tips: {
             photoTips: "ಫೋಟೋ ಸಲಹೆಗಳು",
             tip1: "ಉತ್ತಮ ನೈಸರ್ಗಿಕ ಬೆಳಕಿನಲ್ಲಿ ಫೋಟೋಗಳನ್ನು ತೆಗೆಯಿರಿ",
             tip2: "ಬಾಧಿತ ಪ್ರದೇಶಗಳ ಮೇಲೆ ಸ್ಪಷ್ಟವಾಗಿ ಗಮನಹರಿಸಿ",
             tip3: "ಹೋಲಿಕೆಗಾಗಿ ಆರೋಗ್ಯಕರ ಭಾಗಗಳನ್ನು ಸೇರಿಸಿ",
-            tip4: "ನೆರಳುಗಳು ಮತ್ತು ಮಸುಕುತನವನ್ನು ತಪ್ಪಿಸಿ",
+            tip4: "ನೆರಳುಗಳು ಮತ್ತು ಮಸುಕುತನವನ್ನು ತಪ್ಪಿಸಿ"
         },
+        labFinder: {
+            title: "ಮಣ್ಣು ಪರೀಕ್ಷಾ ಪ್ರಯೋಗಾಲಯವನ್ನು ಹುಡುಕಿ",
+            description: "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಪಡೆಯಲು, ದಯವಿಟ್ಟು ಹತ್ತಿರದ ಸರ್ಕಾರಿ-ಅನುಮೋದಿತ ಪ್ರಯೋಗಾಲಯಗಳಲ್ಲಿ ಒಂದಕ್ಕೆ ಭೇಟಿ ನೀಡಿ.",
+            findingLabs: "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಬಳಸಿಕೊಂಡು ಹತ್ತಿರದ ಪ್ರಯೋಗಾಲಯಗಳನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ...",
+            locationError: "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಪ್ರವೇಶಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಸ್ಥಳ ಸೇವೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
+            noLabsFound: "ಹತ್ತಿರದಲ್ಲಿ ಯಾವುದೇ ಸರ್ಕಾರಿ ಪ್ರಯೋಗಾಲಯಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಹುಡುಕಲು ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
+            enterManuallyButton: "ಬದಲಿಗೆ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ"
+        }
     },
     ta: {
         title: "பயிர் ஆலோசனை மற்றும் மண் ஆரோக்கியம்",
@@ -411,49 +366,39 @@ const diagnosisLanguages: Record<string, any> = {
         hasCard: "என்னிடம் மண் சுகாதார அட்டை உள்ளது",
         noCard: "என்னிடம் மண் சுகாதார அட்டை இல்லை",
         uploadCard: "மண் சுகாதார அட்டையை பதிவேற்று",
-        enterAadhaar: "ஆதார் எண்ணை உள்ளிடவும்",
-        linkAadhaar: "ஆதாருடன் இணைக்கவும்",
         manualEntry: "கையேடு மண் தரவு நுழைவு",
-        severity: {
-            low: "குறைந்த ஆபத்து",
-            medium: "நடுத்தர ஆபத்து",
-            high: "அதிக ஆபத்து",
-        },
+        severity: { low: "குறைந்த ஆபத்து", medium: "நடுத்தர ஆபத்து", high: "அதிக ஆபத்து" },
         actions: {
             retake: "மற்றொரு புகைப்படம் எடு",
             speakResults: "முடிவுகளைக் கேளுங்கள்",
             getHelp: "நிபுணர் உதவியைப் பெறுங்கள்",
             back: "பின்",
-            submitData: "தரவைச் சமர்ப்பி",
             getGuidance: "வழிகாட்டுதலைப் பெறுங்கள்",
             cancel: "ரத்துசெய்"
         },
         soilData: {
-            ph: "pH நிலை",
-            nitrogen: "நைட்ரஜன் (N)",
-            phosphorus: "பாஸ்பரஸ் (P)",
-            potassium: "பொட்டாசியம் (K)",
-            organicCarbon: "கரிம கார்பன்",
-            sulfur: "கந்தகம் (S)",
-            zinc: "துத்தநாகம் (Zn)",
-            boron: "போரான் (B)",
-            iron: "இரும்பு (Fe)",
-            manganese: "மாங்கனீசு (Mn)",
-            ec: "கடத்துத்திறன் (EC)",
-            calcium: "கால்சியம் (Ca)",
-            magnesium: "மெக்னீசியம் (Mg)",
-            cu: "தாமிரம் (Cu)",
+            ph: "pH நிலை", nitrogen: "நைட்ரஜன் (N)", phosphorus: "பாஸ்பரஸ் (P)", potassium: "பொட்டாசியம் (K)",
+            organicCarbon: "கரிம கார்பன்", sulfur: "கந்தகம் (S)", zinc: "துத்தநாகம் (Zn)", boron: "போரான் (B)",
+            iron: "இரும்பு (Fe)", manganese: "மாங்கனீசு (Mn)", ec: "கடத்துத்திறன் (EC)", calcium: "கால்சியம் (Ca)",
+            magnesium: "மெக்னீசியம் (Mg)", cu: "தாமிரம் (Cu)"
         },
         tips: {
             photoTips: "புகைப்பட குறிப்புகள்",
             tip1: "நல்ல இயற்கை ஒளியில் புகைப்படங்களை எடுக்கவும்",
             tip2: "பாதிக்கப்பட்ட பகுதிகளில் தெளிவாக கவனம் செலுத்துங்கள்",
             tip3: "ஒப்பீட்டிற்காக ஆரோக்கியமான பாகங்களைச் சேர்க்கவும்",
-            tip4: "நிழல்கள் மற்றும் மங்கலாக்குவதைத் தவிர்க்கவும்",
+            tip4: "நிழல்கள் மற்றும் மங்கலாக்குவதைத் தவிர்க்கவும்"
         },
+        labFinder: {
+            title: "மண் பரிசோதனை ஆய்வகத்தைக் கண்டறியவும்",
+            description: "மண் சுகாதார அட்டையைப் பெற, அருகிலுள்ள அரசாங்கத்தால் அங்கீகரிக்கப்பட்ட ஆய்வகங்களில் ஒன்றைப் பார்வையிடவும்.",
+            findingLabs: "உங்கள் இருப்பிடத்தைப் பயன்படுத்தி அருகிலுள்ள ஆய்வகங்களைக் கண்டறிகிறது...",
+            locationError: "உங்கள் இருப்பிடத்தை அணுக முடியவில்லை. உங்கள் உலாவி அமைப்புகளில் இருப்பிடச் சேவைகளை இயக்கவும் அல்லது தரவை கைமுறையாக உள்ளிடவும்.",
+            noLabsFound: "அருகில் அரசு ஆய்வகங்கள் எதுவும் இல்லை. ஆன்லைனில் தேட முயற்சிக்கவும் அல்லது தரவை கைமுறையாக உள்ளிடவும்.",
+            enterManuallyButton: "அதற்கு பதிலாக தரவை கைமுறையாக உள்ளிடவும்"
+        }
     },
 };
-
 
 type DiagnosisStage = "upload" | "analyzing" | "results" | "soilInsights" | "recommendations" | "combinedGuidance";
 
@@ -475,6 +420,12 @@ export default function CropDiagnosis() {
     const [currentTab, setCurrentTab] = useState("crop");
     const [structuredGuidance, setStructuredGuidance] = useState<StructuredGuidance | null>(null);
 
+    // New states for lab finder
+    const [showLabFinder, setShowLabFinder] = useState(false);
+    const [nearbyLabs, setNearbyLabs] = useState<Lab[]>([]);
+    const [isFindingLabs, setIsFindingLabs] = useState(false);
+    const [locationError, setLocationError] = useState<string | null>(null);
+
     const [manualSoilData, setManualSoilData] = useState<SoilDataEntry>({
         ph: undefined, nitrogen: undefined, phosphorus: undefined, potassium: undefined,
         organicCarbon: undefined, sulfur: undefined, ec: undefined, calcium: undefined,
@@ -490,6 +441,35 @@ export default function CropDiagnosis() {
     const soilCardInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
     const t = diagnosisLanguages[currentLang] || diagnosisLanguages.en
+
+	const handleFindLabs = () => {
+        setIsFindingLabs(true);
+        setLocationError(null);
+        setHasSoilCard(false); // Move to the next screen
+        setShowLabFinder(true); // Show the lab finder UI
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                // SIMULATE API CALL to find labs based on lat/lon
+                // In a real app, you would fetch this from a backend service or Google Maps API
+                console.log(`Searching for labs near ${latitude}, ${longitude}`);
+                setTimeout(() => {
+                    setNearbyLabs([
+                        { name: "District Soil Testing Laboratory, Krishibhavan", address: "Shivajinagar, Pune-411005" },
+                        { name: "Agricultural College Soil Lab", address: "College Of Agriculture, Pune" },
+                        { name: "KVK Narayangaon Soil Testing", address: "Narayangaon, Pune District" }
+                    ]);
+                    setIsFindingLabs(false);
+                }, 2000);
+            },
+            (error) => {
+                console.error("Geolocation error:", error);
+                setLocationError(t.labFinder.locationError);
+                setIsFindingLabs(false);
+            }
+        );
+    };
 
     const getInsightsFromData = (data: SoilReportData): Insight[] => {
         const insights: Insight[] = [];
@@ -844,8 +824,9 @@ export default function CropDiagnosis() {
                                     <Card>
                                         <CardHeader><CardTitle className="text-lg flex items-center gap-2"><CreditCard className="h-5 w-5 text-primary" />{t.soilHealthCard}</CardTitle></CardHeader>
                                         <CardContent className="space-y-4"><p className="text-muted-foreground text-pretty">Do you have a Soil Health Card? We can provide a detailed analysis based on it.</p>
-                                            <div className="flex flex-col sm:flex-row gap-4"><Button onClick={() => setHasSoilCard(true)} className="flex-1"><CheckCircle className="mr-2 h-4 w-4" />{t.hasCard}</Button>
-                                                <Button variant="outline" onClick={() => setHasSoilCard(false)} className="flex-1"><CreditCard className="mr-2 h-4 w-4" />{t.noCard}</Button>
+                                            <div className="flex flex-col sm:flex-row gap-4">
+												<Button onClick={() => setHasSoilCard(true)} className="flex-1"><CheckCircle className="mr-2 h-4 w-4" />{t.hasCard}</Button>
+                                                <Button variant="outline" onClick={handleFindLabs} className="flex-1"><CreditCard className="mr-2 h-4 w-4" />{t.noCard}</Button>
                                             </div></CardContent>
                                     </Card>
                                 ) : hasSoilCard && !soilDataLoaded ? (
@@ -856,7 +837,39 @@ export default function CropDiagnosis() {
                                             <input ref={soilCardInputRef} type="file" accept="image/*,.pdf" onChange={handleSoilCardUpload} className="hidden" />
                                         </CardContent>
                                     </Card>
-                                ) : hasSoilCard === false && !soilDataLoaded ? (
+								// Lab Finder UI
+                                ) : showLabFinder ? (
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="text-lg flex items-center gap-2"><Search className="h-5 w-5 text-primary" />{t.labFinder.title}</CardTitle>
+                                            <CardDescription>{t.labFinder.description}</CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            {isFindingLabs ? (
+                                                <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t.labFinder.findingLabs}</div>
+                                            ) : locationError ? (
+                                                <Alert variant="destructive"><AlertTriangle className="h-4 w-4" /><AlertDescription>{locationError}</AlertDescription></Alert>
+                                            ) : nearbyLabs.length > 0 ? (
+                                                <div className="space-y-3">
+                                                    {nearbyLabs.map((lab, index) => (
+                                                        <div key={index} className="p-3 border rounded-lg flex items-start gap-3">
+                                                            <MapPin className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                                                            <div>
+                                                                <p className="font-semibold">{lab.name}</p>
+                                                                <p className="text-sm text-muted-foreground">{lab.address}</p>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <p className="text-sm text-muted-foreground">{t.labFinder.noLabsFound}</p>
+                                            )}
+                                            <Button variant="outline" onClick={() => { setShowLabFinder(false); setShowManualEntry(true); }} className="w-full mt-4">
+                                                {t.labFinder.enterManuallyButton}
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
+                                ) : showManualEntry || (hasSoilCard === false && !soilDataLoaded) ? (
                                     <Card>
                                         <CardHeader><CardTitle className="text-lg flex items-center gap-2"><MapPin className="h-5 w-5 text-primary" />{t.manualEntry}</CardTitle></CardHeader>
                                         <CardContent>
