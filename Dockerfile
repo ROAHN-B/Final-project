@@ -4,15 +4,19 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Copy dependency-related files and install dependencies
-COPY package*.json ./
-RUN npm ci
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy dependency-related files
+COPY package*.json pnpm-lock.yaml ./
+
+# Install dependencies using pnpm
+RUN pnpm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Set build-time environment variables (these are not included in the final image)
-# You can add more build-time variables here if needed
+# Set build-time environment variables
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ARG NEXT_PUBLIC_WEATHER_KEY
@@ -30,15 +34,19 @@ RUN npm run build
 FROM node:18-alpine AS runner
 WORKDIR /app
 
+# Install pnpm in the runner stage
+RUN npm install -g pnpm
+
 # Copy only the necessary files from the builder stage
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/next.config.mjs ./next.config.mjs
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application
+# Start the application using npm start, which is defined in your package.json
 CMD ["npm", "start"]
