@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
-const key = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const key = process.env.GEMINI_API_KEY_GEMINI_ROUTE;
 if (!key) throw new Error("GEMINI_API_KEY is missing in .env.local");
 
 const genAI = new GoogleGenerativeAI(key);

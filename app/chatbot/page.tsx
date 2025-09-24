@@ -17,7 +17,7 @@ import { Send, Bot, User, Paperclip, Mic, X, LoaderCircle, Sparkles, Languages, 
 import { cn } from "@/lib/utils";
 
 // ---------- CONFIG & TYPES ----------
-const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY_CHATBOT;
 
 type Message = {
   role: "user" | "bot";

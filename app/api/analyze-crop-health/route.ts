@@ -4,11 +4,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 
-if (!process.env.GEMINI_API_KEY) {
+if (!process.env.GEMINI_API_KEY_CROP_HEALTH) {
   throw new Error("GEMINI_API_KEY is not set in environment variables.");
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY_CROP_HEALTH);
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 function fileToGenerativePart(buffer: Buffer, mimeType: string) {

@@ -4,11 +4,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 
-if (!process.env.GEMINI_API_KEY) {
+if (!process.env.GEMINI_API_KEY_SOIL_CARD) {
   throw new Error("GEMINI_API_KEY is not set in environment variables.");
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY_SOIL_CARD);
 
 function fileToGenerativePart(buffer: Buffer, mimeType: string) {
   return { inlineData: { data: buffer.toString("base64"), mimeType } };
