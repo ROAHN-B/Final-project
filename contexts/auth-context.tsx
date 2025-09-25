@@ -16,11 +16,18 @@ export interface User {
   taluka: string
   village: string
   language: Language
+  avatarUrl?: string;
+  farmSize?: string;
+  cropTypes?: string;
+  experience?: string;
+  bio?: string;
+  email?: string;
 }
 
 interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
+  loading: boolean;
   login: (userData: User) => void
   logout: () => void
   updateProfile: (userData: Partial<User>) => void
@@ -32,16 +39,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [loading, setLoading] = useState(true);
   const router = useRouter()
 
   useEffect(() => {
     // Use sessionStorage to persist login for the current session
     if (typeof window !== 'undefined') {
-      const storedUser = sessionStorage.getItem("agricultural_app_user")
-      if (storedUser) {
-        const parsedUser: User = JSON.parse(storedUser)
-        setUser(parsedUser)
-        setIsAuthenticated(true)
+      try {
+        const storedUser = sessionStorage.getItem("agricultural_app_user")
+        if (storedUser) {
+          const parsedUser: User = JSON.parse(storedUser)
+          setUser(parsedUser)
+          setIsAuthenticated(true)
+        }
+      } catch (error) {
+        console.error("Failed to parse user from session storage", error);
+        sessionStorage.removeItem("agricultural_app_user");
+      } finally {
+        setLoading(false);
       }
     }
   }, [])
@@ -79,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, updateProfile, register }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, loading, login, logout, updateProfile, register }}>
       {children}
     </AuthContext.Provider>
   )

@@ -1361,27 +1361,32 @@ interface LanguageProviderProps {
 }
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [currentLang, setCurrentLangState] = useState<Language>(() => {
-    if (typeof window !== "undefined") {
-      const savedLang = localStorage.getItem("krishi-language") as Language
-      if (savedLang && ["en", "hi", "mr", "pa", "kn", "ta"].includes(savedLang)) {
-        return savedLang
-      }
-    }
-    return "en" // Default language
-  })
+  const [currentLang, setCurrentLangState] = useState<Language>("en")
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    setIsMounted(true)
+    const savedLang = localStorage.getItem("krishi-language") as Language
+    if (savedLang && ["en", "hi", "mr", "pa", "kn", "ta"].includes(savedLang)) {
+      setCurrentLangState(savedLang)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isMounted) {
       localStorage.setItem("krishi-language", currentLang)
     }
-  }, [currentLang])
+  }, [currentLang, isMounted])
 
   const setCurrentLang = (lang: Language) => {
     setCurrentLangState(lang)
   }
 
   const translations = globalTranslations[currentLang]
+
+  if (!isMounted) {
+    return null
+  }
 
   return (
     <LanguageContext.Provider value={{ currentLang, setCurrentLang, translations }}>
