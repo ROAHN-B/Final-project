@@ -16,42 +16,48 @@ import { Leaf } from "lucide-react"
 // List of routes that require authentication
 const protectedRoutes = [
   "/dashboard",
-  "/profile",
+  "/profile", 
   "/market",
   "/community",
   "/diagnose",
   "/schemes",
   "/contact",
   "/weather",
+  "/chatbot", // Add chatbot to protected routes
 ]
 
-function AppInitializer({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, user, loading } = useAuth();
+function AuthWrapper({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, user } = useAuth()
   const pathname = usePathname()
   const router = useRouter()
 
   useEffect(() => {
-    if (loading) return; // Don't do anything until auth state is loaded
-
-    if (isAuthenticated && user && (pathname === "/" || pathname === "/login")) {
+    // If user is authenticated and on the landing page, redirect to dashboard
+    if (isAuthenticated && user && pathname === "/") {
       router.push("/dashboard")
-    } else if (!isAuthenticated && protectedRoutes.includes(pathname)) {
-      router.push("/login")
+      return
     }
-  }, [isAuthenticated, user, pathname, router, loading])
 
-  if (loading || (!isAuthenticated && protectedRoutes.includes(pathname))) {
+    // If not authenticated and trying to access a protected route, redirect to login
+    if (!isAuthenticated && protectedRoutes.includes(pathname)) {
+      router.push("/login")
+      return
+    }
+  }, [isAuthenticated, user, pathname, router])
+
+  // Render children only if authenticated or on a non-protected route
+  if (!isAuthenticated && protectedRoutes.includes(pathname) && pathname !== "/login") {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Leaf className="h-12 w-12 text-primary animate-pulse mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading Your Farm...</p>
+          <p className="text-muted-foreground">Redirecting to login...</p>
         </div>
       </div>
-    );
+    )
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }
 
 export default function ClientLayout({
@@ -59,6 +65,22 @@ export default function ClientLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Fix service worker registration with error handling
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(registration) {
+            console.log('[SW] Registration successful');
+          })
+          .catch(function(error) {
+            console.log('[SW] Registration failed, but continuing:', error);
+            // Don't break the app if SW fails
+          });
+      });
+    }
+  }, []);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -76,31 +98,13 @@ export default function ClientLayout({
         <link rel="icon" type="image/svg+xml" href="/agricultural-app-icon.jpg" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="shortcut icon" href="/agricultural-app-icon.jpg" />
-
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                      console.log('[SW] Registration successful');
-                    })
-                    .catch(function(error) {
-                      console.log('[SW] Registration failed');
-                    });
-                });
-              }
-            `,
-          }}
-        />
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <AuthProvider>
           <LanguageProvider>
             <AdvisoryProvider>
               <Suspense fallback={null}>
-                <AppInitializer>{children}</AppInitializer>
+                <AuthWrapper>{children}</AuthWrapper>
               </Suspense>
             </AdvisoryProvider>
           </LanguageProvider>

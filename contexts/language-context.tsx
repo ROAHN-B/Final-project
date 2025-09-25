@@ -984,7 +984,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
   },
   // Kannada Translations
   kn: {
-    title: "ಕೃಷಿಮಿತ್ರ",
+    title: "ਕ੍ਰਿਸ਼ੀಮಿತ್ರ",
     subtitle: "ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಕೃಷಿ ಸಲಹೆಗಾರ",
     description: "ನಿಮ್ಮ ಸ್ಥಳೀಯ ಭಾಷೆಯಲ್ಲಿ ತಕ್ಷಣದ ಬೆಳೆ ಸಲಹೆ, ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು ಮತ್ತು ಹವಾಮಾನ ನವೀಕರಣಗಳನ್ನು ಪಡೆಯಿರಿ",
     getStarted: "ಪ್ರಾರಂಭಿಸಿ",
@@ -1175,7 +1175,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     description: "உங்கள் உள்ளூர் மொழியில் உடனடி பயிர் ஆலோசனை, சந்தை விலைகள் மற்றும் வானிலை புதுப்பிப்புகளைப் பெறுங்கள்",
     getStarted: "தொடங்குங்கள்",
     exploreFeatures: "அம்சங்களை ஆராயவும்",
-    logout: "வெளியேறு",
+    logout: "ವೆளியேறு",
     login: "உள்நுழை",
     signup: "பதிவுசெய்",
     continue: "தொடரவும்",
@@ -1248,7 +1248,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       placeholders: {
         fullName: "உங்கள் முழு பெயரை உள்ளிடவும்",
         phone: "தொலைபேசி எண்ணை உள்ளிடவும்",
-        email: "மின்னஞ்சਲ முகவரியை உள்ளிடவும்",
+        email: "மின்னஞ்சல் முகவரியை உள்ளிடவும்",
         village: "கிராமத்தின் பெயரை உள்ளிடவும்",
         district: "மாவட்டத்தை உள்ளிடவும்",
         state: "மாநிலத்தைத் தேர்ந்தெடுக்கவும்",
@@ -1361,38 +1361,27 @@ interface LanguageProviderProps {
 }
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [currentLang, setCurrentLangState] = useState<Language>("en")
-  const [isMounted, setIsMounted] = useState(false)
+  const [currentLang, setCurrentLangState] = useState<Language>("en");
 
   useEffect(() => {
-    setIsMounted(true)
-    const savedLang = localStorage.getItem("krishi-language") as Language
+    const savedLang = localStorage.getItem("krishi-language") as Language;
     if (savedLang && ["en", "hi", "mr", "pa", "kn", "ta"].includes(savedLang)) {
-      setCurrentLangState(savedLang)
+      setCurrentLangState(savedLang);
     }
-  }, [])
-
-  useEffect(() => {
-    if (isMounted) {
-      localStorage.setItem("krishi-language", currentLang)
-    }
-  }, [currentLang, isMounted])
+  }, []); // This effect runs once on the client after mount.
 
   const setCurrentLang = (lang: Language) => {
-    setCurrentLangState(lang)
-  }
+    setCurrentLangState(lang);
+    localStorage.setItem("krishi-language", lang); // Update localStorage directly.
+  };
 
-  const translations = globalTranslations[currentLang]
-
-  if (!isMounted) {
-    return null
-  }
+  const translations = globalTranslations[currentLang];
 
   return (
     <LanguageContext.Provider value={{ currentLang, setCurrentLang, translations }}>
       {children}
     </LanguageContext.Provider>
-  )
+  );
 }
 
 export function useLanguage() {
