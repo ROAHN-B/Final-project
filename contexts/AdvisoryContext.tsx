@@ -59,7 +59,7 @@ export function AdvisoryProvider({ children }: { children: ReactNode }) {
     const interval = setInterval(() => {
       const newNotification = sampleNotifications[Math.floor(Math.random() * sampleNotifications.length)];
       addNotification(newNotification);
-    }, 2000000); // 2 minutes
+    }, 200000); // 2 minutes
 
     return () => clearInterval(interval);
   }, []);

@@ -30,7 +30,7 @@ import { NotificationBell } from "@/components/notification-bell"
 import { HamburgerMenu } from "@/components/hamburger-menu"
 
 export default function Dashboard() {
-  const { translations: t, language } = useLanguage()
+  const { translations: t, currentLang } = useLanguage()
   const { user } = useAuth()
   const { advisories } = useAdvisory()
   const [isListening, setIsListening] = useState(false)
@@ -68,12 +68,12 @@ export default function Dashboard() {
       return
     }
     const recognition = new SpeechRecognition()
-    recognition.lang = language === "en" ? "en-US" : language
+    recognition.lang = currentLang === "en" ? "en-US" : currentLang
     recognition.interimResults = false
     recognition.maxAlternatives = 1
 
     let heard = false
-    recognition.onresult = (e) => {
+    recognition.onresult = (e: any) => {
       heard = true
       const transcript = e.results[0][0].transcript.trim()
       recognition.stop()
@@ -87,7 +87,7 @@ export default function Dashboard() {
 
     recognition.onend = () => {
       if (!heard) {
-        const intro = KRISHI_INTRO[language] || KRISHI_INTRO.en
+        const intro = KRISHI_INTRO[currentLang] || KRISHI_INTRO.en
         speak(intro)
       }
     }
@@ -101,10 +101,9 @@ export default function Dashboard() {
   async function askGemini(q: string) {
     setVoiceStatus("processing")
     const system = `You are Krishi Mitra, an expert Indian agriculture assistant.
-You MUST reply only in the ${language} language, using simple words.
+You MUST reply only in the ${currentLang} language, using simple words.
 Provide a short, 6-5 sentence answer about farming, crops, weather, pests, or prices.
 Prioritize safe, practical, and low-cost advice.you have knowledge of every crop and state specific crop as well.
-You can fluently speak in ${language}.
 For clear audio, do not use emojis or end your reply with the letter 'n'.
 User asks: ${q}
 Krishi Mitra:`
@@ -129,7 +128,7 @@ Krishi Mitra:`
         kn: "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಮತ್ತೆ ಕೇಳಿ।",
         ta: "உங்கள் இணைப்பை சரிபார்க்கவும் அல்லது மீண்டும் கேளுங்கள்।",
       }
-      speak(fallback[language] || fallback.en)
+      speak(fallback[currentLang] || fallback.en)
     }
   }
 
@@ -148,7 +147,7 @@ Krishi Mitra:`
       ta: "ta-IN",
     }
     const utter = new SpeechSynthesisUtterance(text)
-    utter.lang = voiceMap[language] || "hi-IN"
+    utter.lang = voiceMap[currentLang] || "hi-IN"
     utter.rate = 0.9
     utter.onend = () => setVoiceStatus("idle")
     window.speechSynthesis.speak(utter)
@@ -262,7 +261,7 @@ Krishi Mitra:`
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {advisories.map((advisory, index) => (
+                {t.dashboard.advisories.map((advisory, index) => (
                   <div key={index} className="p-4 bg-gradient-to-r from-primary/5 to-transparent rounded-2xl border-l-4 border-primary space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-semibold text-sm text-balance">{advisory.title}</h4>
@@ -292,12 +291,12 @@ Krishi Mitra:`
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-3 bg-card/50 rounded-2xl">
                     <Droplets className="h-5 w-5 text-primary mx-auto mb-2" />
-                    <div className="text-sm text-muted-foreground">{t.dashboard.weather?.humidityLabel || "Humidity"}</div>
+                    <div className="text-sm text-muted-foreground">{t.profile.fields.humidity || "Humidity"}</div>
                     <div className="font-bold text-foreground">{t.dashboard.weather?.humidity || "65%"}</div>
                   </div>
                   <div className="text-center p-3 bg-card/50 rounded-2xl">
                     <Wind className="h-5 w-5 text-primary mx-auto mb-2" />
-                    <div className="text-sm text-muted-foreground">{t.dashboard.weather?.rainfallLabel || "Rainfall"}</div>
+                    <div className="text-sm text-muted-foreground">{t.profile.fields.rainfall || "Rainfall"}</div>
                     <div className="font-bold text-foreground">{t.dashboard.weather?.rainfall || "2mm"}</div>
                   </div>
                 </div>
