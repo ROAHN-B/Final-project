@@ -11,6 +11,25 @@ interface Notification {
   read: boolean;
 }
 
+// Define the shape of soil report data
+interface SoilReport {
+  ph: number;
+  ec: number;
+  oc: number;
+  n: number;
+  p: number;
+  k: number;
+  s: number;
+  ca: number;
+  mg: number;
+  zn: number;
+  b: number;
+  fe: number;
+  mn: number;
+  cu: number;
+  timestamp: number;
+}
+
 // Define the shape of your context data
 interface AdvisoryContextType {
   advisories: { title: string; description: string; priority: string; time: string }[];
@@ -19,6 +38,8 @@ interface AdvisoryContextType {
   addNotification: (notification: Omit<Notification, "id" | "read">) => void;
   markAsRead: (id: number) => void;
   markAllAsRead: () => void;
+  latestSoilReport: SoilReport | null;
+  setLatestSoilReport: (report: SoilReport | null) => void;
 }
 
 const AdvisoryContext = createContext<AdvisoryContextType | undefined>(undefined);
@@ -37,6 +58,7 @@ export function AdvisoryProvider({ children }: { children: ReactNode }) {
   ]);
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [latestSoilReport, setLatestSoilReport] = useState<SoilReport | null>(null);
 
   const addAdvisory = (newAdvisory: { title: string; description: string; priority: string; time: string }) => {
     setAdvisories(prevAdvisories => [newAdvisory, ...prevAdvisories]);
@@ -66,7 +88,7 @@ export function AdvisoryProvider({ children }: { children: ReactNode }) {
 
 
   return (
-    <AdvisoryContext.Provider value={{ advisories, addAdvisory, notifications, addNotification, markAsRead, markAllAsRead }}>
+    <AdvisoryContext.Provider value={{ advisories, addAdvisory, notifications, addNotification, markAsRead, markAllAsRead, latestSoilReport, setLatestSoilReport }}>
       {children}
     </AdvisoryContext.Provider>
   );

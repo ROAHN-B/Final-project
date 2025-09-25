@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useLanguage, Language } from "@/contexts/language-context";
+import { useAdvisory } from "@/contexts/AdvisoryContext";
 
 // UI Components
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -301,8 +302,8 @@ function useVoiceRecognition(lang: Language, onTranscript: (transcript: string) 
                        lang === 'ta' ? 'ta-IN' : 'en-US';
       
       recognition.lang = langCode;
-      recognition.interimResults = false; // <-- FIX: Process only final results
-      recognition.continuous = false; // <-- FIX: Stop after first pause
+      recognition.interimResults = false;
+      recognition.continuous = false;
       
       recognition.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
@@ -343,6 +344,7 @@ function useVoiceRecognition(lang: Language, onTranscript: (transcript: string) 
 // ---------- MAIN COMPONENT ----------
 function ChatbotContent() {
   const { translations: t, currentLang, setCurrentLang } = useLanguage();
+  const { latestSoilReport } = useAdvisory();
   const [isMounted, setIsMounted] = useState(false);
   
   // ----- STATE -----
@@ -478,7 +480,29 @@ function ChatbotContent() {
     const languageName = languageMap[currentLang];
     const isFirstUserMessage = messages.length === 1 && chatHistory[activeChatId]?.title.includes("New Chat");
     const titleInstruction = isFirstUserMessage ? "After your response, on a new line, provide a short, 3-5 word title for this conversation prefixed with `Title: `." : "";
-    const STRICT_SYSTEM_PROMPT = `You are Krishi-Mitra... You MUST reply in ${languageName}... ${titleInstruction}`;
+    
+    let soilDataContext = "";
+    if (latestSoilReport) {
+      const reportDate = new Date(latestSoilReport.timestamp).toLocaleDateString();
+      const reportEntries = Object.entries(latestSoilReport)
+        .filter(([key, value]) => key !== 'timestamp' && value !== undefined && value !== null && !isNaN(Number(value)))
+        .map(([key, value]) => `  - ${key.toUpperCase()}: ${value}`)
+        .join("\n");
+
+      soilDataContext = `
+---
+IMPORTANT CONTEXT: SOIL HEALTH REPORT
+This is the user's soil health data from a report analyzed on ${reportDate}. You MUST use this information to answer any relevant questions about their soil, crops, or fertilizers. Do not ask for this information again.
+Soil Data:
+${reportEntries}
+---
+`;
+    }
+
+    const STRICT_SYSTEM_PROMPT = `You are Krishi-Mitra, an expert Indian agricultural assistant. You have access to the user's soil health data provided below if available.
+${soilDataContext}
+You MUST reply in ${languageName}, using simple words. Provide short, practical, and low-cost advice.
+${titleInstruction}`;
     
     let userParts: any[] = [{ text: `${message || "Please analyze the image."}` }];
     if (image) {
@@ -525,7 +549,7 @@ function ChatbotContent() {
     } finally {
         setIsLoading(false);
     }
-  }, [activeChatId, chatHistory, currentLang, messages, GEMINI_API_KEY]);
+  }, [activeChatId, chatHistory, currentLang, messages, GEMINI_API_KEY, latestSoilReport]);
 
   const handleSelectChat = useCallback((id: string) => {
     if (id === activeChatId) {

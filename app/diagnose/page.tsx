@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import type React from "react"
 import { useState, useRef, FC, ReactNode } from "react"
@@ -493,7 +493,7 @@ const diagnosisLanguages: Record<string, any> = {
         analyzing: "ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
         results: "ರೋಗನಿರ್ಣಯದ ಫಲಿತಾಂಶಗಳು",
         confidence: "ವಿಶ್ವಾಸದ ಮಟ್ಟ",
-        recommendations: "ಶಿಫਾਰಸುಗಳು",
+        recommendations: "ಶಿಫಾರಸುಗಳು",
         soilHealth: "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ವಿಶ್ಲೇಷಣೆ",
         soilHealthCard: "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್",
         hasCard: "ನನ್ನ ಬಳಿ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಇದೆ",
@@ -571,9 +571,9 @@ const diagnosisLanguages: Record<string, any> = {
             title: "ಮಣ್ಣು ಪರೀಕ್ಷಾ ಪ್ರಯೋಗಾಲಯವನ್ನು ಹುಡುಕಿ",
             description: "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಪಡೆಯಲು, ದಯವಿಟ್ಟು ಹತ್ತಿರದ ಸರ್ಕಾರಿ-ಅನುಮೋದಿತ ಪ್ರಯೋಗಾಲಯಗಳಲ್ಲಿ ಒಂದಕ್ಕೆ ಭೇಟಿ ನೀಡಿ.",
             findingLabs: "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಬಳಸಿಕೊಂಡು ಹತ್ತಿರದ ಪ್ರಯೋಗಾಲಯಗಳನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ...",
-            locationError: "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಪ್ರವೇಶಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಸ್ಥಳ ಸೇವೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
-            noLabsFound: "ಹತ್ತಿರದಲ್ಲಿ ಯಾವುದೇ ಸರ್ಕಾರಿ ಪ್ರಯೋಗಾಲಯಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಹುಡುಕಲು ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
-            enterManuallyButton: "ಬದಲಿಗೆ ಡೇਟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ"
+            locationError: "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಪ್ರವೇಶಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ। ದಯವಿಟ್ಟು ನಿಮ್ಮ ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಸ್ಥಳ ಸೇವೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
+            noLabsFound: "ಹತ್ತಿರದಲ್ಲಿ ಯಾವುದೇ ಸರ್ಕಾರಿ ಪ್ರಯೋಗಾಲಯಗಳು ಕಂಡುಬಂದಿಲ್ಲ। ದಯವಿಟ್ಟು ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಹುಡುಕಲು ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
+            enterManuallyButton: "ಬದಲಿಗೆ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ"
         }
     },
     ta: {
@@ -674,7 +674,7 @@ type DiagnosisStage = "upload" | "analyzing" | "results" | "soilInsights" | "rec
 
 export default function CropDiagnosis() {
     const { currentLang } = useLanguage()
-    const { addAdvisory } = useAdvisory()
+    const { addAdvisory, setLatestSoilReport } = useAdvisory()
     const { user } = useAuth();
     const [stage, setStage] = useState<DiagnosisStage>("upload")
     const [uploadedImage, setUploadedImage] = useState<string | null>(null)
@@ -810,6 +810,7 @@ export default function CropDiagnosis() {
     };
 
     const handleShowInsights = (data: SoilReportData) => {
+        setLatestSoilReport({ ...data, timestamp: Date.now() });
         const insights = getInsightsFromData(data);
         setGeneratedInsights(insights);
         setSoilDataLoaded(true);
@@ -987,6 +988,7 @@ export default function CropDiagnosis() {
                 mn: manualSoilData.manganese || 0, cu: manualSoilData.cu || 0,
             };
 
+            setLatestSoilReport({ ...dataToGenerateInsights, timestamp: Date.now() });
             const insights = getInsightsFromData(dataToGenerateInsights);
             setGeneratedInsights(insights); 
             const plan = getFertilizerPlan(insights);
