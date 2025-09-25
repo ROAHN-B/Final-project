@@ -36,9 +36,20 @@ const marketLanguages = {
     todayPrices: "Today's Prices",
     priceHistory: "Price History",
     marketAnalysis: "Market Analysis",
-    lastUpdated: "Last updated",
+    lastUpdated: "Last updated: 2 minutes ago",
     priceChange: "Price Change",
     marketTrend: "Market Trend",
+    marketComparison: "Market Comparison",
+    trendAnalysis: "Trend Analysis",
+    trendAnalysisText:
+      "Prices have shown a {trend} trend over the past month. Current market conditions suggest this trend may continue in the short term.",
+    expertConsultation: "Expert Consultation",
+    expertConsultationText: "Need personalized market advice? Connect with our agricultural market experts.",
+    callExpert: "Call Market Expert",
+    findingMarkets: "Finding Local Markets...",
+    allowLocation: "Please allow location access to get the most relevant market data.",
+    defaultingLocation: "(Defaulting to Solapur if access is denied)",
+    week: "Week",
     locations: {
       mumbai: "Mumbai",
       pune: "Pune",
@@ -74,9 +85,9 @@ const marketLanguages = {
       market: "Recommended Market",
     },
     trends: {
-      rising: "Rising",
-      falling: "Falling",
-      stable: "Stable",
+      rising: "rising",
+      falling: "falling",
+      stable: "stable",
     },
   },
   hi: {
@@ -87,9 +98,20 @@ const marketLanguages = {
     todayPrices: "आज के भाव",
     priceHistory: "भाव इतिहास",
     marketAnalysis: "बाजार विश्लेषण",
-    lastUpdated: "अंतिम अपडेट",
+    lastUpdated: "अंतिम अपडेट: 2 मिनट पहले",
     priceChange: "भाव परिवर्तन",
     marketTrend: "बाजार ट्रेंड",
+    marketComparison: "बाजार तुलना",
+    trendAnalysis: "ट्रेंड विश्लेषण",
+    trendAnalysisText:
+      "पिछले महीने में कीमतों में {trend} की प्रवृत्ति देखी गई है। वर्तमान बाजार की स्थितियाँ बताती हैं कि यह प्रवृत्ति अल्पावधि में जारी रह सकती है।",
+    expertConsultation: "विशेषज्ञ परामर्श",
+    expertConsultationText: "व्यक्तिगत बाजार सलाह चाहिए? हमारे कृषि बाजार विशेषज्ञों से जुड़ें।",
+    callExpert: "बाजार विशेषज्ञ को कॉल करें",
+    findingMarkets: "स्थानीय बाजार ढूँढ़ रहा है...",
+    allowLocation: "सबसे प्रासंगिक बाजार डेटा प्राप्त करने के लिए कृपया स्थान पहुंच की अनुमति दें।",
+    defaultingLocation: "(पहुंच अस्वीकार होने पर सोलापुर में डिफॉल्ट)",
+    week: "सप्ताह",
     locations: {
       mumbai: "मुंबई",
       pune: "पुणे",
@@ -125,8 +147,8 @@ const marketLanguages = {
       market: "अनुशंसित बाजार",
     },
     trends: {
-      rising: "बढ़ रहा है",
-      falling: "गिर रहा है",
+      rising: "बढ़ती",
+      falling: "गिरती",
       stable: "स्थिर",
     },
   },
@@ -138,9 +160,20 @@ const marketLanguages = {
     todayPrices: "आजचे भाव",
     priceHistory: "भावाचा इतिहास",
     marketAnalysis: "बाजार विश्लेषण",
-    lastUpdated: "शेवटचे अपडेट",
+    lastUpdated: "शेवटचे अपडेट: २ मिनिटांपूर्वी",
     priceChange: "भाव बदल",
     marketTrend: "बाजार ट्रेंड",
+    marketComparison: "बाजार तुलना",
+    trendAnalysis: "ट्रेंड विश्लेषण",
+    trendAnalysisText:
+      "गेल्या महिन्यात भावांमध्ये {trend} ची प्रवृत्ती दिसून आली आहे. सध्याच्या बाजाराची परिस्थिती दर्शवते की ही प्रवृत्ती अल्प कालावधीसाठी सुरू राहू शकते.",
+    expertConsultation: "तज्ञ सल्ला",
+    expertConsultationText: "वैयक्तिकृत बाजार सल्ला हवा आहे का? आमच्या कृषी बाजार तज्ञांशी संपर्क साधा.",
+    callExpert: "बाजार तज्ञांना कॉल करा",
+    findingMarkets: "स्थानिक बाजारपेठ शोधत आहे...",
+    allowLocation: "सर्वात संबंधित बाजार डेटा मिळविण्यासाठी कृपया स्थान प्रवेशास अनुमती द्या.",
+    defaultingLocation: "(प्रवेश नाकारल्यास सोलापूरमध्ये डीफॉल्ट)",
+    week: "आठवडा",
     locations: {
       mumbai: "मुंबई",
       pune: "पुणे",
@@ -176,8 +209,8 @@ const marketLanguages = {
       market: "शिफारस केलेले बाजार",
     },
     trends: {
-      rising: "वाढत आहे",
-      falling: "घसरत आहे",
+      rising: "वाढणारी",
+      falling: "घसरण",
       stable: "स्थिर",
     },
   },
@@ -189,9 +222,20 @@ const marketLanguages = {
     todayPrices: "இன்றைய விலைகள்",
     priceHistory: "விலை வரலாறு",
     marketAnalysis: "சந்தை பகுப்பாய்வு",
-    lastUpdated: "கடைசியாக புதுப்பிக்கப்பட்டது",
+    lastUpdated: "கடைசியாக புதுப்பிக்கப்பட்டது: 2 நிமிடங்களுக்கு முன்பு",
     priceChange: "விலை மாற்றம்",
     marketTrend: "சந்தை போக்கு",
+    marketComparison: "சந்தை ஒப்பீடு",
+    trendAnalysis: "போக்கு பகுப்பாய்வு",
+    trendAnalysisText:
+      "கடந்த மாதத்தில் விலைகள் {trend} போக்கைக் காட்டியுள்ளன. தற்போதைய சந்தை நிலைமைகள் இந்த போக்கு குறுகிய காலத்தில் தொடரக்கூடும் என்று கூறுகின்றன.",
+    expertConsultation: "நிபுணர் ஆலோசனை",
+    expertConsultationText: "தனிப்பயனாக்கப்பட்ட சந்தை ஆலோசனை தேவையா? எங்கள் விவசாய சந்தை நிபுணர்களுடன் இணையுங்கள்.",
+    callExpert: "சந்தை நிபுணரை அழைக்கவும்",
+    findingMarkets: "உள்ளூர் சந்தைகளைக் கண்டறிகிறது...",
+    allowLocation: "மிகவும் பொருத்தமான சந்தைத் தரவைப் பெற இருப்பிட அணுகலை அனுமதிக்கவும்.",
+    defaultingLocation: "(அணுகல் மறுக்கப்பட்டால் சோலாபூருக்கு இயல்புநிலையாகிறது)",
+    week: "வாரம்",
     locations: {
       mumbai: "மும்பை",
       pune: "புனே",
@@ -227,9 +271,9 @@ const marketLanguages = {
       market: "பரிந்துரைக்கப்பட்ட சந்தை",
     },
     trends: {
-      rising: "உயர்ந்து வருகிறது",
-      falling: "குறைந்து வருகிறது",
-      stable: "நிலையானது",
+      rising: "உயர்ந்து",
+      falling: "குறைந்து",
+      stable: "நிலையான",
     },
   },
   kn: {
@@ -240,9 +284,20 @@ const marketLanguages = {
     todayPrices: "ಇಂದಿನ ಬೆಲೆಗಳು",
     priceHistory: "ಬೆಲೆ ಇತಿಹಾಸ",
     marketAnalysis: "ಮಾರುಕಟ್ಟೆ ವಿಶ್ಲೇಷಣೆ",
-    lastUpdated: "ಕೊನೆಯ ಬಾರಿ ನವೀಕರಿಸಲಾಗಿದೆ",
+    lastUpdated: "ಕೊನೆಯ ಬಾರಿ ನವೀಕರಿಸಲಾಗಿದೆ: 2 ನಿಮಿಷಗಳ ಹಿಂದೆ",
     priceChange: "ಬೆಲೆ ಬದಲಾವಣೆ",
     marketTrend: "ಮಾರುಕಟ್ಟೆ ಪ್ರವೃತ್ತಿ",
+    marketComparison: "ಮಾರುಕಟ್ಟೆ ಹೋಲಿಕೆ",
+    trendAnalysis: "ಪ್ರವೃತ್ತಿ ವಿಶ್ಲೇಷಣೆ",
+    trendAnalysisText:
+      "ಕಳೆದ ತಿಂಗಳಲ್ಲಿ ಬೆಲೆಗಳು {trend} ಪ್ರವೃತ್ತಿಯನ್ನು ತೋರಿಸಿವೆ. ಪ್ರಸ್ತುತ ಮಾರುಕಟ್ಟೆ ಪರಿಸ್ಥಿತಿಗಳು ಈ ಪ್ರವೃತ್ತಿ ಅಲ್ಪಾವಧಿಯಲ್ಲಿ ಮುಂದುವರಿಯಬಹುದು ಎಂದು ಸೂಚಿಸುತ್ತವೆ.",
+    expertConsultation: "ತಜ್ಞರ ಸಮಾಲೋಚನೆ",
+    expertConsultationText: "ವೈಯಕ್ತಿಕಗೊಳಿಸಿದ ಮಾರುಕಟ್ಟೆ ಸಲಹೆ ಬೇಕೇ? ನಮ್ಮ ಕೃಷಿ ಮಾರುಕಟ್ಟೆ ತಜ್ಞರೊಂದಿಗೆ ಸಂಪರ್ಕ ಸಾಧಿಸಿ.",
+    callExpert: "ಮಾರುಕಟ್ಟೆ ತಜ್ಞರಿಗೆ ಕರೆ ಮಾಡಿ",
+    findingMarkets: "ಸ್ಥಳೀಯ ಮಾರುಕಟ್ಟೆಗಳನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ...",
+    allowLocation: "ಅತ್ಯಂತ ಸಂಬಂಧಿತ ಮಾರುಕಟ್ಟೆ ಡೇಟಾವನ್ನು ಪಡೆಯಲು ದಯವಿಟ್ಟು ಸ್ಥಳ ಪ್ರವೇಶವನ್ನು ಅನುಮತಿಸಿ.",
+    defaultingLocation: "(ಪ್ರವೇಶವನ್ನು ನಿರಾಕರಿಸಿದರೆ ಸೋಲಾಪುರಕ್ಕೆ ಡೀಫಾಲ್ಟ್ ಆಗುತ್ತದೆ)",
+    week: "ವಾರ",
     locations: {
       mumbai: "ಮುಂಬೈ",
       pune: "ಪುಣೆ",
@@ -278,9 +333,9 @@ const marketLanguages = {
       market: "ಶಿಫಾರಸು ಮಾಡಿದ ಮಾರುಕಟ್ಟೆ",
     },
     trends: {
-      rising: "ಏರುತ್ತಿದೆ",
-      falling: "ಇಳಿಯುತ್ತಿದೆ",
-      stable: "ಸ್ಥಿರವಾಗಿದೆ",
+      rising: "ಏರುತ್ತಿರುವ",
+      falling: "ಇಳಿಯುತ್ತಿರುವ",
+      stable: "ಸ್ಥಿರ",
     },
   },
   pa: {
@@ -291,9 +346,20 @@ const marketLanguages = {
     todayPrices: "ਅੱਜ ਦੀਆਂ ਕੀਮਤਾਂ",
     priceHistory: "ਕੀਮਤ ਇਤਿਹਾਸ",
     marketAnalysis: "ਮਾਰਕੀਟ ਵਿਸ਼ਲੇਸ਼ਣ",
-    lastUpdated: "ਆਖਰੀ ਵਾਰ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ",
+    lastUpdated: "ਆਖਰੀ ਵਾਰ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ: 2 ਮਿੰਟ ਪਹਿਲਾਂ",
     priceChange: "ਕੀਮਤ ਬਦਲਾਅ",
     marketTrend: "ਮਾਰਕੀਟ ਰੁਝਾਨ",
+    marketComparison: "ਮਾਰਕੀਟ ਤੁਲਨਾ",
+    trendAnalysis: "ਰੁਝਾਨ ਵਿਸ਼ਲੇਸ਼ਣ",
+    trendAnalysisText:
+      "ਪਿਛਲੇ ਮਹੀਨੇ ਵਿੱਚ ਕੀਮਤਾਂ ਨੇ ਇੱਕ {trend} ਰੁਝਾਨ ਦਿਖਾਇਆ ਹੈ। ਮੌਜੂਦਾ ਮਾਰਕੀਟ ਹਾਲਾਤ ਦੱਸਦੇ ਹਨ ਕਿ ਇਹ ਰੁਝਾਨ ਥੋੜ੍ਹੇ ਸਮੇਂ ਵਿੱਚ ਜਾਰੀ ਰਹਿ ਸਕਦਾ ਹੈ।",
+    expertConsultation: "ਮਾਹਿਰ ਸਲਾਹ",
+    expertConsultationText: "ਨਿੱਜੀ ਮਾਰਕੀਟ ਸਲਾਹ ਦੀ ਲੋੜ ਹੈ? ਸਾਡੇ ਖੇਤੀਬਾੜੀ ਮਾਰਕੀਟ ਮਾਹਿਰਾਂ ਨਾਲ ਜੁੜੋ।",
+    callExpert: "ਮਾਰਕੀਟ ਮਾਹਿਰ ਨੂੰ ਕਾਲ ਕਰੋ",
+    findingMarkets: "ਸਥਾਨਕ ਬਾਜ਼ਾਰਾਂ ਨੂੰ ਲੱਭ ਰਿਹਾ ਹੈ...",
+    allowLocation: "ਸਭ ਤੋਂ ਢੁਕਵਾਂ ਮਾਰਕੀਟ ਡੇਟਾ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਸਥਾਨ ਪਹੁੰਚ ਦੀ ਆਗਿਆ ਦਿਓ।",
+    defaultingLocation: "(ਜੇ ਪਹੁੰਚ ਤੋਂ ਇਨਕਾਰ ਕੀਤਾ ਜਾਂਦਾ ਹੈ ਤਾਂ ਸੋਲਾਪੁਰ ਵਿੱਚ ਡਿਫੌਲਟ)",
+    week: "ਹਫ਼ਤਾ",
     locations: {
       mumbai: "ਮੁੰਬਈ",
       pune: "ਪੁਣੇ",
@@ -329,8 +395,8 @@ const marketLanguages = {
       market: "ਸਿਫਾਰਸ਼ ਕੀਤੀ ਮਾਰਕੀਟ",
     },
     trends: {
-      rising: "ਵਧ ਰਿਹਾ ਹੈ",
-      falling: "ਘਟ ਰਿਹਾ ਹੈ",
+      rising: "ਵਧ ਰਿਹਾ",
+      falling: "ਡਿੱਗ ਰਿਹਾ",
       stable: "ਸਥਿਰ",
     },
   },
@@ -542,11 +608,9 @@ export default function MarketIntelligence() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background text-center p-4">
         <LoaderCircle className="h-12 w-12 animate-spin text-primary mb-4" />
-        <h1 className="text-xl font-bold text-foreground">Finding Local Markets...</h1>
-        <p className="text-muted-foreground mt-2">
-          Please allow location access to get the most relevant market data.
-        </p>
-        <p className="text-sm text-muted-foreground mt-4">(Defaulting to Solapur if access is denied)</p>
+        <h1 className="text-xl font-bold text-foreground">{t.findingMarkets}</h1>
+        <p className="text-muted-foreground mt-2">{t.allowLocation}</p>
+        <p className="text-sm text-muted-foreground mt-4">{t.defaultingLocation}</p>
       </div>
     )
   }
@@ -579,7 +643,7 @@ export default function MarketIntelligence() {
           <h1 className="text-2xl font-bold text-foreground">{t.subtitle}</h1>
           <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">
             <Calendar className="h-4 w-4" />
-            {t.lastUpdated}: 2 minutes ago
+            {t.lastUpdated}
           </p>
         </div>
 
@@ -657,7 +721,7 @@ export default function MarketIntelligence() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-primary" />
-                  Market Comparison
+                  {t.marketComparison}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -693,16 +757,18 @@ export default function MarketIntelligence() {
                    <div className="grid grid-cols-4 gap-2">
                      {getCurrentCropData().history.map((price, index) => (
                        <div key={index} className="text-center p-3 border rounded-lg">
-                         <div className="text-xs text-muted-foreground">Week {index + 1}</div>
+                         <div className="text-xs text-muted-foreground">{t.week} {index + 1}</div>
                          <div className="font-semibold">₹{price.toLocaleString()}</div>
                        </div>
                      ))}
                    </div>
                    <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                     <h4 className="font-semibold mb-2">Trend Analysis</h4>
+                     <h4 className="font-semibold mb-2">{t.trendAnalysis}</h4>
                      <p className="text-sm text-muted-foreground">
-                       Prices have shown a {getCurrentCropData().trend} trend over the past month. Current market
-                       conditions suggest this trend may continue in the short term.
+                        {t.trendAnalysisText.replace(
+                            "{trend}",
+                            t.trends[getCurrentCropData().trend as keyof typeof t.trends]
+                        )}
                      </p>
                    </div>
                  </div>
@@ -760,17 +826,17 @@ export default function MarketIntelligence() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Phone className="h-5 w-5 text-primary" />
-                  Expert Consultation
+                  {t.expertConsultation}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Need personalized market advice? Connect with our agricultural market experts.
+                    {t.expertConsultationText}
                   </p>
                   <Button className="w-full sm:w-auto">
                     <Phone className="mr-2 h-4 w-4" />
-                    Call Market Expert
+                    {t.callExpert}
                   </Button>
                 </div>
               </CardContent>

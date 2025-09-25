@@ -4,29 +4,33 @@ import { Button } from "@/components/ui/button"
 import { Home, Stethoscope, BarChart3, MessageCircle } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/contexts/language-context"
 
 export function BottomNavigation() {
   const router = useRouter()
   const pathname = usePathname()
+  const { translations } = useLanguage()
+
+  const t = translations.bottomNav
 
   const navItems = [
     {
-      label: "Home",
+      label: t?.home || "Home",
       icon: Home,
       href: "/dashboard",
     },
     {
-      label: "Diagnose",
+      label: t?.diagnose || "Diagnose",
       icon: Stethoscope,
       href: "/diagnose",
     },
     {
-      label: "Markets",
+      label: t?.markets || "Markets",
       icon: BarChart3,
       href: "/market",
     },
     {
-      label: "Community",
+      label: t?.community || "Community",
       icon: MessageCircle,
       href: "/community",
     },

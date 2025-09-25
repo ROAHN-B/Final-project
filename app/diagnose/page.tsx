@@ -64,8 +64,8 @@ interface SoilReportData {
 interface Insight {
     title: string;
     value: string;
-    level: "Very Low" | "Low" | "Optimal" | "High" | "Very High" | "Acidic" | "Neutral" | "Alkaline";
-    color: "red" | "green" | "yellow" | "blue";
+    level: "Very Low" | "Low" | "Optimal" | "High" | "Very High" | "Acidic" | "Neutral" | "Alkaline" | string;
+    color: "red" | "yellow" | "green" | "blue";
     description: string;
     icon: ReactNode;
 }
@@ -147,6 +147,51 @@ const diagnosisLanguages: Record<string, any> = {
             iron: "Iron (Fe)", manganese: "Manganese (Mn)", ec: "Conductivity (EC)", calcium: "Calcium (Ca)",
             magnesium: "Magnesium (Mg)", cu: "Copper (Cu)"
         },
+        soilReport: {
+            reportTitle: "Your Soil Health Report",
+            reportSubtitle: "A detailed breakdown of your soil's condition based on the provided data.",
+            coreProperties: "Core Properties",
+            primaryNutrients: "Primary Nutrients (NPK)",
+            secondaryNutrients: "Secondary Nutrients",
+            micronutrients: "Micronutrients",
+            levels: {
+                low: "Low",
+                optimal: "Optimal",
+                high: "High",
+                acidic: "Acidic",
+                neutral: "Neutral",
+                alkaline: "Alkaline"
+            },
+            descriptions: {
+                ph_acidic: "Acidic soil can lock nutrients. Consider applying lime.",
+                ph_alkaline: "Alkaline soil can limit micronutrient uptake. Consider gypsum.",
+                ph_neutral: "Excellent pH for nutrient availability.",
+                ec_high: "High salinity can cause salt stress to plants.",
+                ec_optimal: "Ideal salt level, safe for all crops.",
+                oc_low: "A critical area for improvement. Add compost or FYM.",
+                oc_optimal: "Excellent organic matter content for soil health.",
+                n: "For leafy growth.",
+                p: "For root and flower development.",
+                k: "For overall vigor and disease resistance.",
+                s: "Key for protein synthesis and oilseeds.",
+                ca: "Builds strong cell walls.",
+                mg: "Central to photosynthesis.",
+                fe: "For chlorophyll formation.",
+                mn: "Aids in photosynthesis.",
+                zn: "For enzyme function.",
+                cu: "For reproductive growth.",
+                b: "Crucial for fruit and seed setting."
+            }
+        },
+        fertilizerRecs: {
+            title: "Fertilizer Guidance",
+            subtitle: "Recommended products based on your soil report.",
+            reasonTemplate: "Your soil is deficient in {nutrient}, which is crucial for {description}.",
+            toCorrect: "To correct {nutrient}",
+            buyLinks: "Buying Links",
+            noRecsTitle: "Excellent Soil Health!",
+            noRecsSubtitle: "No specific nutrient deficiencies were found."
+        },
         tips: {
             photoTips: "Photo Tips",
             tip1: "Take photos in good natural light",
@@ -193,6 +238,51 @@ const diagnosisLanguages: Record<string, any> = {
             organicCarbon: "जैविक कार्बन", sulfur: "सल्फर (S)", zinc: "जिंक (Zn)", boron: "बोरॉन (B)",
             iron: "आयरन (Fe)", manganese: "मैंगनीज (Mn)", ec: "चालकता (EC)", calcium: "कैल्शियम (Ca)",
             magnesium: "मैग्नीशियम (Mg)", cu: "तांबा (Cu)"
+        },
+        soilReport: {
+            reportTitle: "आपकी मिट्टी स्वास्थ्य रिपोर्ट",
+            reportSubtitle: "दिए गए डेटा के आधार पर आपकी मिट्टी की स्थिति का विस्तृत विश्लेषण।",
+            coreProperties: "मुख्य गुण",
+            primaryNutrients: "प्राथमिक पोषक तत्व (NPK)",
+            secondaryNutrients: "द्वितीयक पोषक तत्व",
+            micronutrients: "सूक्ष्म पोषक तत्व",
+            levels: {
+                low: "कम",
+                optimal: "इष्टतम",
+                high: "उच्च",
+                acidic: "अम्लीय",
+                neutral: "तटस्थ",
+                alkaline: "क्षारीय"
+            },
+            descriptions: {
+                ph_acidic: "अम्लीय मिट्टी पोषक तत्वों को रोक सकती है। चूना डालने पर विचार करें।",
+                ph_alkaline: "क्षारीय मिट्टी सूक्ष्म पोषक तत्वों के अवशोषण को सीमित कर सकती है। जिप्सम पर विचार करें।",
+                ph_neutral: "पोषक तत्वों की उपलब्धता के लिए उत्कृष्ट पीएच।",
+                ec_high: "उच्च लवणता पौधों पर नमक का तनाव पैदा कर सकती है।",
+                ec_optimal: "आदर्श नमक स्तर, सभी फसलों के लिए सुरक्षित।",
+                oc_low: "सुधार के लिए एक महत्वपूर्ण क्षेत्र। खाद या FYM डालें।",
+                oc_optimal: "मिट्टी के स्वास्थ्य के लिए उत्कृष्ट जैविक पदार्थ।",
+                n: "पत्तेदार विकास के लिए।",
+                p: "जड़ और फूल के विकास के लिए।",
+                k: "समग्र शक्ति और रोग प्रतिरोध के लिए।",
+                s: "प्रोटीन संश्लेषण और तिलहन के लिए महत्वपूर्ण।",
+                ca: "मजबूत कोशिका दीवारों का निर्माण करता है।",
+                mg: "प्रकाश संश्लेषण के लिए केंद्रीय।",
+                fe: "क्लोरोफिल निर्माण के लिए।",
+                mn: "प्रकाश संश्लेषण में सहायक।",
+                zn: "एंजाइम फ़ंक्शन के लिए।",
+                cu: "प्रजनन वृद्धि के लिए।",
+                b: "फल और बीज सेटिंग के लिए महत्वपूर्ण।"
+            }
+        },
+        fertilizerRecs: {
+            title: "उर्वरक मार्गदर्शन",
+            subtitle: "आपकी मिट्टी की रिपोर्ट के आधार पर अनुशंसित उत्पाद।",
+            reasonTemplate: "आपकी मिट्टी में {nutrient} की कमी है, जो {description} के लिए महत्वपूर्ण है।",
+            toCorrect: "{nutrient} को ठीक करने के लिए",
+            buyLinks: "खरीदने के लिंक",
+            noRecsTitle: "उत्कृष्ट मिट्टी स्वास्थ्य!",
+            noRecsSubtitle: "कोई विशेष पोषक तत्व की कमी नहीं पाई गई।"
         },
         tips: {
             photoTips: "फोटो टिप्स",
@@ -241,6 +331,51 @@ const diagnosisLanguages: Record<string, any> = {
             iron: "लोह (Fe)", manganese: "मॅंगनीज (Mn)", ec: "विद्युत चालकता (EC)", calcium: "कॅल्शियम (Ca)",
             magnesium: "मॅग्नेशियम (Mg)", cu: "तांबे (Cu)"
         },
+        soilReport: {
+            reportTitle: "तुमचा मृदा आरोग्य अहवाल",
+            reportSubtitle: "प्रदान केलेल्या डेटावर आधारित तुमच्या मातीच्या स्थितीचे तपशीलवार विश्लेषण.",
+            coreProperties: "मुख्य गुणधर्म",
+            primaryNutrients: "प्राथमिक पोषक तत्वे (NPK)",
+            secondaryNutrients: "दुय्यम पोषक तत्वे",
+            micronutrients: "सूक्ष्म पोषक तत्वे",
+            levels: {
+                low: "कमी",
+                optimal: "उत्तम",
+                high: "जास्त",
+                acidic: "आम्लयुक्त",
+                neutral: "उदासीन",
+                alkaline: "अल्कधर्मी"
+            },
+            descriptions: {
+                ph_acidic: "आम्लयुक्त माती पोषक तत्वे रोखू शकते. चुना वापरण्याचा विचार करा.",
+                ph_alkaline: "अल्कधर्मी माती सूक्ष्म पोषक तत्वांचे शोषण मर्यादित करू शकते. जिप्समचा विचार करा.",
+                ph_neutral: "पोषक तत्वांच्या उपलब्धतेसाठी उत्कृष्ट पीएच.",
+                ec_high: "जास्त क्षारता वनस्पतींवर क्षारांचा ताण निर्माण करू शकते.",
+                ec_optimal: "आदर्श क्षार पातळी, सर्व पिकांसाठी सुरक्षित.",
+                oc_low: "सुधारणेसाठी एक महत्त्वाचे क्षेत्र. कंपोस्ट किंवा FYM टाका.",
+                oc_optimal: "मातीच्या आरोग्यासाठी उत्कृष्ट सेंद्रिय पदार्थ.",
+                n: "पानांच्या वाढीसाठी.",
+                p: "मूळ आणि फुलांच्या विकासासाठी.",
+                k: "एकूण जोम आणि रोग प्रतिकारशक्तीसाठी.",
+                s: "प्रोटीन संश्लेषण आणि तेलबियांसाठी महत्त्वाचे.",
+                ca: "मजबूत पेशींच्या भिंती तयार करते.",
+                mg: "प्रकाशसंश्लेषणासाठी केंद्रीय.",
+                fe: "हरितद्रव्य निर्मितीसाठी.",
+                mn: "प्रकाशसंश्लेषणात मदत करते.",
+                zn: "एंजाइम कार्यासाठी.",
+                cu: "प्रजनन वाढीसाठी.",
+                b: "फळे आणि बियांच्या सेटिंगसाठी महत्त्वपूर्ण."
+            }
+        },
+        fertilizerRecs: {
+            title: "खत मार्गदर्शन",
+            subtitle: "तुमच्या मातीच्या अहवालानुसार शिफारस केलेली उत्पादने.",
+            reasonTemplate: "तुमच्या मातीत {nutrient} ची कमतरता आहे, जे {description} साठी महत्त्वाचे आहे.",
+            toCorrect: "{nutrient} दुरुस्त करण्यासाठी",
+            buyLinks: "खरेदी लिंक",
+            noRecsTitle: "उत्कृष्ट मातीचे आरोग्य!",
+            noRecsSubtitle: "कोणत्याही विशिष्ट पोषक तत्वांची कमतरता आढळली नाही."
+        },
         tips: {
             photoTips: "फोटो टिप्स",
             tip1: "चांगल्या नैसर्गिक प्रकाशात फोटो घ्या",
@@ -287,6 +422,51 @@ const diagnosisLanguages: Record<string, any> = {
             organicCarbon: "ਜੈਵਿਕ ਕਾਰਬਨ", sulfur: "ਸਲਫਰ (S)", zinc: "ਜ਼ਿੰਕ (Zn)", boron: "ਬੋਰੋਨ (B)",
             iron: "ਆਇਰਨ (Fe)", manganese: "ਮੈਂਗਨੀਜ਼ (Mn)", ec: "ਚਾਲਕਤਾ (EC)", calcium: "ਕੈਲਸ਼ੀਅਮ (Ca)",
             magnesium: "ਮੈਗਨੀਸ਼ੀਅਮ (Mg)", cu: "ਤਾਂਬਾ (Cu)"
+        },
+        soilReport: {
+            reportTitle: "ਤੁਹਾਡੀ ਮਿੱਟੀ ਦੀ ਸਿਹਤ ਰਿਪੋਰਟ",
+            reportSubtitle: "ਦਿੱਤੇ ਗਏ ਡੇਟਾ ਦੇ ਆਧਾਰ 'ਤੇ ਤੁਹਾਡੀ ਮਿੱਟੀ ਦੀ ਸਥਿਤੀ ਦਾ ਵਿਸਤ੍ਰਿਤ ਵਿਸ਼ਲੇਸ਼ਣ।",
+            coreProperties: "ਮੁੱਖ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ",
+            primaryNutrients: "ਪ੍ਰਾਇਮਰੀ ਪੋਸ਼ਕ ਤੱਤ (NPK)",
+            secondaryNutrients: "ਸੈਕੰਡਰੀ ਪੋਸ਼ਕ ਤੱਤ",
+            micronutrients: "ਸੂਖਮ ਪੋਸ਼ਕ ਤੱਤ",
+            levels: {
+                low: "ਘੱਟ",
+                optimal: "ਅਨੁਕੂਲ",
+                high: "ਉੱਚ",
+                acidic: "ਤੇਜ਼ਾਬੀ",
+                neutral: "ਨਿਰਪੱਖ",
+                alkaline: "ਖਾਰੀ"
+            },
+            descriptions: {
+                ph_acidic: "ਤੇਜ਼ਾਬੀ ਮਿੱਟੀ ਪੌਸ਼ਟਿਕ ਤੱਤਾਂ ਨੂੰ ਬੰਦ ਕਰ ਸਕਦੀ ਹੈ। ਚੂਨਾ ਲਗਾਉਣ 'ਤੇ ਵਿਚਾਰ ਕਰੋ।",
+                ph_alkaline: "ਖਾਰੀ ਮਿੱਟੀ ਸੂਖਮ ਪੌਸ਼ਟਿਕ ਤੱਤਾਂ ਦੇ ਗ੍ਰਹਿਣ ਨੂੰ ਸੀਮਤ ਕਰ ਸਕਦੀ ਹੈ। ਜਿਪਸਮ 'ਤੇ ਵਿਚਾਰ ਕਰੋ।",
+                ph_neutral: "ਪੌਸ਼ਟਿਕ ਤੱਤਾਂ ਦੀ ਉਪਲਬਧਤਾ ਲਈ ਸ਼ਾਨਦਾਰ pH।",
+                ec_high: "ਉੱਚੀ ਲੂਣਤਾ ਪੌਦਿਆਂ ਨੂੰ ਲੂਣ ਦਾ ਤਣਾਅ ਪੈਦਾ ਕਰ ਸਕਦੀ ਹੈ।",
+                ec_optimal: "ਆਦਰਸ਼ ਲੂਣ ਪੱਧਰ, ਸਾਰੀਆਂ ਫਸਲਾਂ ਲਈ ਸੁਰੱਖਿਅਤ।",
+                oc_low: "ਸੁਧਾਰ ਲਈ ਇੱਕ ਮਹੱਤਵਪੂਰਨ ਖੇਤਰ। ਖਾਦ ਜਾਂ FYM ਸ਼ਾਮਲ ਕਰੋ।",
+                oc_optimal: "ਮਿੱਟੀ ਦੀ ਸਿਹਤ ਲਈ ਸ਼ਾਨਦਾਰ ਜੈਵਿਕ ਪਦਾਰਥ।",
+                n: "ਪੱਤੇਦਾਰ ਵਿਕਾਸ ਲਈ।",
+                p: "ਜੜ੍ਹ ਅਤੇ ਫੁੱਲ ਦੇ ਵਿਕਾਸ ਲਈ।",
+                k: "ਸਮੁੱਚੀ ਤਾਕਤ ਅਤੇ ਰੋਗ ਪ੍ਰਤੀਰੋਧ ਲਈ।",
+                s: "ਪ੍ਰੋਟੀਨ ਸੰਸਲੇਸ਼ਣ ਅਤੇ ਤੇਲ ਬੀਜਾਂ ਲਈ ਕੁੰਜੀ।",
+                ca: "ਮਜ਼ਬੂਤ ਸੈੱਲ ਦੀਵਾਰਾਂ ਬਣਾਉਂਦਾ ਹੈ।",
+                mg: "ਪ੍ਰਕਾਸ਼ ਸੰਸ਼ਲੇਸ਼ਣ ਲਈ ਕੇਂਦਰੀ।",
+                fe: "ਕਲੋਰੋਫਿਲ ਦੇ ਗਠਨ ਲਈ।",
+                mn: "ਪ੍ਰਕਾਸ਼ ਸੰਸ਼ਲੇਸ਼ਣ ਵਿੱਚ ਸਹਾਇਤਾ ਕਰਦਾ ਹੈ।",
+                zn: "ਐਨਜ਼ਾਈਮ ਫੰਕਸ਼ਨ ਲਈ।",
+                cu: "ਪ੍ਰਜਨਨ ਵਿਕਾਸ ਲਈ।",
+                b: "ਫਲ ਅਤੇ ਬੀਜ ਸੈਟਿੰਗ ਲਈ ਮਹੱਤਵਪੂਰਨ।"
+            }
+        },
+        fertilizerRecs: {
+            title: "ਖਾਦ ਮਾਰਗਦਰਸ਼ਨ",
+            subtitle: "ਤੁਹਾਡੀ ਮਿੱਟੀ ਦੀ ਰਿਪੋਰਟ ਦੇ ਆਧਾਰ 'ਤੇ ਸਿਫਾਰਸ਼ ਕੀਤੇ ਉਤਪਾਦ।",
+            reasonTemplate: "ਤੁਹਾਡੀ ਮਿੱਟੀ ਵਿੱਚ {nutrient} ਦੀ ਕਮੀ ਹੈ, ਜੋ {description} ਲਈ ਮਹੱਤਵਪੂਰਨ ਹੈ।",
+            toCorrect: "{nutrient} ਨੂੰ ਠੀਕ ਕਰਨ ਲਈ",
+            buyLinks: "ਖਰੀਦਣ ਦੇ ਲਿੰਕ",
+            noRecsTitle: "ਸ਼ਾਨਦਾਰ ਮਿੱਟੀ ਦੀ ਸਿਹਤ!",
+            noRecsSubtitle: "ਕੋਈ ਖਾਸ ਪੌਸ਼ਟਿਕ ਤੱਤਾਂ ਦੀ ਕਮੀ ਨਹੀਂ ਮਿਲੀ।"
         },
         tips: {
             photoTips: "ਫੋਟੋ ਸੁਝਾਅ",
@@ -335,6 +515,51 @@ const diagnosisLanguages: Record<string, any> = {
             iron: "ಕಬ್ಬಿಣ (Fe)", manganese: "ಮ್ಯಾಂಗನೀಸ್ (Mn)", ec: "ವಾಹಕತೆ (EC)", calcium: "ಕ್ಯಾಲ್ಸಿಯಂ (Ca)",
             magnesium: "ಮೆಗ್ನೀಸಿಯಮ್ (Mg)", cu: "ತಾಮ್ರ (Cu)"
         },
+        soilReport: {
+            reportTitle: "ನಿಮ್ಮ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ವರದಿ",
+            reportSubtitle: "ಒದಗಿಸಿದ ಡೇಟಾದ ಆಧಾರದ ಮೇಲೆ ನಿಮ್ಮ ಮಣ್ಣಿನ ಸ್ಥಿತಿಯ ವಿವರವಾದ ವಿಶ್ಲೇಷಣೆ.",
+            coreProperties: "ಪ್ರಮುಖ ಗುಣಲಕ್ಷಣಗಳು",
+            primaryNutrients: "ಪ್ರಾಥಮಿಕ ಪೋಷಕಾಂಶಗಳು (NPK)",
+            secondaryNutrients: "ದ್ವಿತೀಯ ಪೋಷಕಾಂಶಗಳು",
+            micronutrients: "ಸೂಕ್ಷ್ಮ ಪೋಷಕಾಂಶಗಳು",
+            levels: {
+                low: "ಕಡಿಮೆ",
+                optimal: "ಸೂಕ್ತ",
+                high: "ಹೆಚ್ಚು",
+                acidic: "ಆಮ್ಲೀಯ",
+                neutral: "ತಟಸ್ಥ",
+                alkaline: "ಕ್ಷಾರೀಯ"
+            },
+            descriptions: {
+                ph_acidic: "ಆಮ್ಲೀಯ ಮಣ್ಣು ಪೋಷಕಾಂಶಗಳನ್ನು ಲಾಕ್ ಮಾಡಬಹುದು. ಸುಣ್ಣವನ್ನು ಅನ್ವಯಿಸುವುದನ್ನು ಪರಿಗಣಿಸಿ.",
+                ph_alkaline: "ಕ್ಷಾರೀಯ ಮಣ್ಣು ಸೂಕ್ಷ್ಮ ಪೋಷಕಾಂಶಗಳ ಹೀರಿಕೊಳ್ಳುವಿಕೆಯನ್ನು ಸೀಮಿತಗೊಳಿಸಬಹುದು. ಜಿಪ್ಸಮ್ ಅನ್ನು ಪರಿಗಣಿಸಿ.",
+                ph_neutral: "ಪೋಷಕಾಂಶಗಳ ಲಭ್ಯತೆಗೆ ಅತ್ಯುತ್ತಮ pH.",
+                ec_high: "ಹೆಚ್ಚಿನ ಲವಣಾಂಶವು ಸಸ್ಯಗಳಿಗೆ ಉಪ್ಪಿನ ಒತ್ತಡವನ್ನು ಉಂಟುಮಾಡಬಹುದು.",
+                ec_optimal: "ಆದರ್ಶ ಉಪ್ಪಿನ ಮಟ್ಟ, ಎಲ್ಲಾ ಬೆಳೆಗಳಿಗೆ ಸುರಕ್ಷಿತ.",
+                oc_low: "ಸುಧಾರಣೆಗೆ ಒಂದು ನಿರ್ಣಾಯಕ ಪ್ರದೇಶ. ಕಾಂಪೋಸ್ಟ್ ಅಥವಾ FYM ಸೇರಿಸಿ.",
+                oc_optimal: "ಮಣ್ಣಿನ ಆರೋಗ್ಯಕ್ಕೆ ಅತ್ಯುತ್ತਮ సేంద్రియ పదార్థం.",
+                n: "ಎಲೆಗಳ ಬೆಳವಣಿಗೆಗೆ.",
+                p: "ಬೇರು ಮತ್ತು ಹೂವಿನ ಅಭಿವೃದ್ಧಿಗೆ.",
+                k: "ಒಟ್ಟಾರೆ ಚೈತನ್ಯ ಮತ್ತು ರೋಗ ನಿರೋಧಕತೆಗಾಗಿ.",
+                s: "ಪ್ರೋಟೀನ್ ಸಂಶ್ಲೇಷಣೆ ಮತ್ತು ಎಣ್ಣೆಬೀಜಗಳಿಗೆ ಪ್ರಮುಖ.",
+                ca: "ಬಲವಾದ ಕೋಶ ಗೋಡೆಗಳನ್ನು ನಿರ್ಮಿಸುತ್ತದೆ.",
+                mg: "ದ್ಯುತಿಸಂಶ್ಲೇಷಣೆಗೆ ಕೇಂದ್ರ.",
+                fe: "ಕ್ಲೋರೊಫಿಲ್ ರಚನೆಗೆ.",
+                mn: "ದ್ಯುತಿಸಂಶ್ಲೇಷಣೆಯಲ್ಲಿ ಸಹಾಯ ಮಾಡುತ್ತದೆ.",
+                zn: "ಕಿಣ್ವ ಕಾರ್ಯಕ್ಕಾಗಿ.",
+                cu: "ಸಂತಾನೋತ್ಪತ್ತಿ ಬೆಳವಣಿಗೆಗೆ.",
+                b: "ಹಣ್ಣು ಮತ್ತು ಬೀಜಗಳ ಸೆಟ್ಟಿಂಗ್‌ಗೆ ನಿರ್ಣಾಯಕ."
+            }
+        },
+        fertilizerRecs: {
+            title: "ಗೊಬ್ಬರ ಮಾರ್ಗದರ್ಶನ",
+            subtitle: "ನಿಮ್ಮ ಮಣ್ಣಿನ ವರದಿಯ ಆಧಾರದ ಮೇಲೆ ಶಿಫಾರಸು ಮಾಡಲಾದ ಉತ್ಪನ್ನಗಳು.",
+            reasonTemplate: "ನಿಮ್ಮ ಮಣ್ಣಿನಲ್ಲಿ {nutrient} ಕೊರತೆಯಿದೆ, ಇದು {description} ಗೆ ನಿರ್ಣಾಯಕವಾಗಿದೆ.",
+            toCorrect: "{nutrient} ಸರಿಪಡಿಸಲು",
+            buyLinks: "ಖರೀದಿ ಲಿಂಕ್‌ಗಳು",
+            noRecsTitle: "ಅತ್ಯುತ್ತಮ ಮಣ್ಣಿನ ಆರೋಗ್ಯ!",
+            noRecsSubtitle: "ಯಾವುದೇ ನಿರ್ದಿಷ್ಟ ಪೋಷಕಾಂಶಗಳ ಕೊರತೆ ಕಂಡುಬಂದಿಲ್ಲ."
+        },
         tips: {
             photoTips: "ಫೋಟೋ ಸಲಹೆಗಳು",
             tip1: "ಉತ್ತಮ ನೈಸರ್ಗಿಕ ಬೆಳಕಿನಲ್ಲಿ ಫೋಟೋಗಳನ್ನು ತೆಗೆಯಿರಿ",
@@ -348,7 +573,7 @@ const diagnosisLanguages: Record<string, any> = {
             findingLabs: "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಬಳಸಿಕೊಂಡು ಹತ್ತಿರದ ಪ್ರಯೋಗಾಲಯಗಳನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ...",
             locationError: "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಪ್ರವೇಶಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಸ್ಥಳ ಸೇವೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
             noLabsFound: "ಹತ್ತಿರದಲ್ಲಿ ಯಾವುದೇ ಸರ್ಕಾರಿ ಪ್ರಯೋಗಾಲಯಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಹುಡುಕಲು ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
-            enterManuallyButton: "ಬದಲಿಗೆ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ"
+            enterManuallyButton: "ಬದಲಿಗೆ ಡೇਟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ"
         }
     },
     ta: {
@@ -381,6 +606,51 @@ const diagnosisLanguages: Record<string, any> = {
             organicCarbon: "கரிம கார்பன்", sulfur: "கந்தகம் (S)", zinc: "துத்தநாகம் (Zn)", boron: "போரான் (B)",
             iron: "இரும்பு (Fe)", manganese: "மாங்கனீசு (Mn)", ec: "கடத்துத்திறன் (EC)", calcium: "கால்சியம் (Ca)",
             magnesium: "மெக்னீசியம் (Mg)", cu: "தாமிரம் (Cu)"
+        },
+        soilReport: {
+            reportTitle: "உங்கள் மண் சுகாதார அறிக்கை",
+            reportSubtitle: "வழங்கப்பட்ட தரவுகளின் அடிப்படையில் உங்கள் மண்ணின் நிலையின் விரிவான முறிவு.",
+            coreProperties: "முக்கிய பண்புகள்",
+            primaryNutrients: "முதன்மை ஊட்டச்சத்துக்கள் (NPK)",
+            secondaryNutrients: "இரண்டாம் நிலை ஊட்டச்சத்துக்கள்",
+            micronutrients: "நுண்ணூட்டச்சத்துக்கள்",
+            levels: {
+                low: "குறைந்த",
+                optimal: "உகந்த",
+                high: "அதிக",
+                acidic: "அமில",
+                neutral: "நடுநிலை",
+                alkaline: "கார"
+            },
+            descriptions: {
+                ph_acidic: "அமில மண் ஊட்டச்சத்துக்களைப் பூட்டக்கூடும். சுண்ணாம்பு இடவும்.",
+                ph_alkaline: "கார மண் நுண்ணூட்டச்சத்துக்களைக் கட்டுப்படுத்தலாம். ஜிப்சம் இடவும்.",
+                ph_neutral: "ஊட்டச்சத்து கிடைப்பதற்கு சிறந்த pH.",
+                ec_high: "அதிக உப்புத்தன்மை தாவரங்களுக்கு உப்பு அழுத்தத்தை ஏற்படுத்தும்.",
+                ec_optimal: "சிறந்த உப்பு நிலை, அனைத்து பயிர்களுக்கும் பாதுகாப்பானது.",
+                oc_low: "மேம்பாட்டிற்கான ஒரு முக்கியமான பகுதி. உரம் அல்லது FYM சேர்க்கவும்.",
+                oc_optimal: "மண் ஆரோக்கியத்திற்கான சிறந்த கரிமப் பொருள் உள்ளடக்கம்.",
+                n: "இலை வளர்ச்சிக்கு.",
+                p: "வேர் மற்றும் மலர் வளர்ச்சிக்கு.",
+                k: "ஒட்டுமொத்த வீரியம் மற்றும் நோய் எதிர்ப்புக்காக.",
+                s: "புரத தொகுப்பு மற்றும் எண்ணெய் வித்துக்களுக்கு முக்கியம்.",
+                ca: "வலுவான செல் சுவர்களை உருவாக்குகிறது.",
+                mg: "ஒளிச்சேர்க்கைக்கு மையமானது.",
+                fe: "குளோரோபில் உருவாவதற்கு.",
+                mn: "ஒளிச்சேர்க்கைக்கு உதவுகிறது.",
+                zn: "நொதி செயல்பாட்டிற்கு.",
+                cu: "இனப்பெருக்க வளர்ச்சிக்கு.",
+                b: "பழம் மற்றும் விதை அமைப்பிற்கு முக்கியமானது."
+            }
+        },
+        fertilizerRecs: {
+            title: "உர வழிகாட்டுதல்",
+            subtitle: "உங்கள் மண் அறிக்கையின் அடிப்படையில் பரிந்துரைக்கப்பட்ட தயாரிப்புகள்.",
+            reasonTemplate: "உங்கள் மண்ணில் {nutrient} குறைவாக உள்ளது, இது {description} க்கு முக்கியமானது.",
+            toCorrect: "{nutrient} ஐ சரிசெய்ய",
+            buyLinks: "வாங்கும் இணைப்புகள்",
+            noRecsTitle: "சிறந்த மண் ஆரோக்கியம்!",
+            noRecsSubtitle: "குறிப்பிட்ட ஊட்டச்சத்து குறைபாடுகள் எதுவும் கண்டறியப்படவில்லை."
         },
         tips: {
             photoTips: "புகைப்பட குறிப்புகள்",
@@ -473,44 +743,60 @@ export default function CropDiagnosis() {
 
     const getInsightsFromData = (data: SoilReportData): Insight[] => {
         const insights: Insight[] = [];
+        const levels = t.soilReport.levels;
+        const descriptions = t.soilReport.descriptions;
+
         const addInsight = (title: string, value: number, unit: string, idealRange: [number, number], icon: ReactNode, customLogic?: (val: number) => Partial<Insight>) => {
-            let level: Insight["level"] = "Optimal", color: Insight["color"] = "green";
-            if (value < idealRange[0]) { level = "Low"; color = "yellow"; }
-            if (value > idealRange[1]) { level = "High"; color = "blue"; }
+            let level: Insight["level"] = levels.optimal, color: Insight["color"] = "green";
+            if (value < idealRange[0]) { level = levels.low; color = "yellow"; }
+            if (value > idealRange[1]) { level = levels.high; color = "blue"; }
             let custom = customLogic ? customLogic(value) : {};
             insights.push({ title, value: `${(value || 0).toFixed(2)} ${unit}`, level, color, description: "", icon, ...custom });
         };
-        addInsight("Soil pH", data.ph, "", [6.25, 7.5], <Thermometer className="h-6 w-6 text-blue-500" />, (val) => ({ level: val < 6.25 ? "Acidic" : val > 7.5 ? "Alkaline" : "Neutral", color: val < 6.25 ? "yellow" : val > 7.5 ? "blue" : "green", description: val < 6.25 ? "Acidic soil can lock nutrients. Consider applying lime." : val > 7.5 ? "Alkaline soil can limit micronutrient uptake. Consider gypsum." : "Excellent pH for nutrient availability." }));
-        addInsight("Conductivity (EC)", data.ec, "mS/cm", [0, 1.0], <Droplets className="h-6 w-6 text-sky-500" />, (val) => ({ level: val > 1.0 ? "High" : "Optimal", color: val > 1.0 ? "red" : "green", description: val > 1.0 ? "High salinity can cause salt stress to plants." : "Ideal salt level, safe for all crops." }));
-        addInsight("Organic Carbon", data.oc, "%", [0.75, Infinity], <FlaskConical className="h-6 w-6 text-amber-600" />, (val) => ({ level: val < 0.75 ? "Low" : "Optimal", color: val < 0.75 ? "red" : "green", description: val < 0.75 ? "A critical area for improvement. Add compost or FYM." : "Excellent organic matter content for soil health." }));
-        addInsight("Nitrogen (N)", data.n, "kg/ha", [281, 410], <Leaf className="h-6 w-6 text-green-500" />, (val) => ({ description: "For leafy growth." }));
-        addInsight("Phosphorus (P)", data.p, "kg/ha", [13, 22], <Sun className="h-6 w-6 text-orange-500" />, (val) => ({ description: "For root and flower development." }));
-        addInsight("Potassium (K)", data.k, "kg/ha", [181, 240], <Award className="h-6 w-6 text-purple-500" />, (val) => ({ description: "For overall vigor and disease resistance." }));
-        addInsight("Sulphur (S)", data.s, "ppm", [7, 15], <Atom className="h-6 w-6 text-yellow-500" />, (val) => ({ description: "Key for protein synthesis and oilseeds." }));
-        addInsight("Calcium (Ca)", data.ca, "%", [0.3, 0.8], <Mountain className="h-6 w-6 text-gray-500" />, (val) => ({ description: "Builds strong cell walls." }));
-        addInsight("Magnesium (Mg)", data.mg, "%", [0.06, 0.15], <Sprout className="h-6 w-6 text-lime-600" />, (val) => ({ description: "Central to photosynthesis." }));
-        addInsight("Iron (Fe)", data.fe, "ppm", [2.5, 4.5], <Microscope className="h-6 w-6 text-red-800" />, (val) => ({ description: "For chlorophyll formation." }));
-        addInsight("Manganese (Mn)", data.mn, "ppm", [1.0, 2.0], <Microscope className="h-6 w-6 text-pink-700" />, (val) => ({ description: "Aids in photosynthesis." }));
-        addInsight("Zinc (Zn)", data.zn, "ppm", [0.5, 1.2], <Microscope className="h-6 w-6 text-teal-600" />, (val) => ({ description: "For enzyme function." }));
-        addInsight("Copper (Cu)", data.cu, "ppm", [0.3, 0.5], <Microscope className="h-6 w-6 text-orange-700" />, (val) => ({ description: "For reproductive growth." }));
-        addInsight("Boron (B)", data.b, "ppm", [0.3, 0.5], <Microscope className="h-6 w-6 text-indigo-600" />, (val) => ({ description: "Crucial for fruit and seed setting." }));
+        addInsight(t.soilData.ph, data.ph, "", [6.25, 7.5], <Thermometer className="h-6 w-6 text-blue-500" />, (val) => ({ level: val < 6.25 ? levels.acidic : val > 7.5 ? levels.alkaline : levels.neutral, color: val < 6.25 ? "yellow" : val > 7.5 ? "blue" : "green", description: val < 6.25 ? descriptions.ph_acidic : val > 7.5 ? descriptions.ph_alkaline : descriptions.ph_neutral }));
+        addInsight(t.soilData.ec, data.ec, "mS/cm", [0, 1.0], <Droplets className="h-6 w-6 text-sky-500" />, (val) => ({ level: val > 1.0 ? levels.high : levels.optimal, color: val > 1.0 ? "red" : "green", description: val > 1.0 ? descriptions.ec_high : descriptions.ec_optimal }));
+        addInsight(t.soilData.organicCarbon, data.oc, "%", [0.75, Infinity], <FlaskConical className="h-6 w-6 text-amber-600" />, (val) => ({ level: val < 0.75 ? levels.low : levels.optimal, color: val < 0.75 ? "red" : "green", description: val < 0.75 ? descriptions.oc_low : descriptions.oc_optimal }));
+        addInsight(t.soilData.nitrogen, data.n, "kg/ha", [281, 410], <Leaf className="h-6 w-6 text-green-500" />, () => ({ description: descriptions.n }));
+        addInsight(t.soilData.phosphorus, data.p, "kg/ha", [13, 22], <Sun className="h-6 w-6 text-orange-500" />, () => ({ description: descriptions.p }));
+        addInsight(t.soilData.potassium, data.k, "kg/ha", [181, 240], <Award className="h-6 w-6 text-purple-500" />, () => ({ description: descriptions.k }));
+        addInsight(t.soilData.sulfur, data.s, "ppm", [7, 15], <Atom className="h-6 w-6 text-yellow-500" />, () => ({ description: descriptions.s }));
+        addInsight(t.soilData.calcium, data.ca, "%", [0.3, 0.8], <Mountain className="h-6 w-6 text-gray-500" />, () => ({ description: descriptions.ca }));
+        addInsight(t.soilData.magnesium, data.mg, "%", [0.06, 0.15], <Sprout className="h-6 w-6 text-lime-600" />, () => ({ description: descriptions.mg }));
+        addInsight(t.soilData.iron, data.fe, "ppm", [2.5, 4.5], <Microscope className="h-6 w-6 text-red-800" />, () => ({ description: descriptions.fe }));
+        addInsight(t.soilData.manganese, data.mn, "ppm", [1.0, 2.0], <Microscope className="h-6 w-6 text-pink-700" />, () => ({ description: descriptions.mn }));
+        addInsight(t.soilData.zinc, data.zn, "ppm", [0.5, 1.2], <Microscope className="h-6 w-6 text-teal-600" />, () => ({ description: descriptions.zn }));
+        addInsight(t.soilData.cu, data.cu, "ppm", [0.3, 0.5], <Microscope className="h-6 w-6 text-orange-700" />, () => ({ description: descriptions.cu }));
+        addInsight(t.soilData.boron, data.b, "ppm", [0.3, 0.5], <Microscope className="h-6 w-6 text-indigo-600" />, () => ({ description: descriptions.b }));
         return insights;
     };
 
     const getFertilizerPlan = (insights: Insight[]): FertilizerRecommendation[] => {
         const plan: FertilizerRecommendation[] = [];
         const nutrientMap: { [key: string]: string } = {
-            'Nitrogen (N)': 'Urea or DAP', 'Phosphorus (P)': 'DAP or Single Super Phosphate', 'Potassium (K)': 'Muriate of Potash (MOP)',
-            'Sulphur (S)': 'Bensulf or Gypsum', 'Zinc (Zn)': 'Zinc Sulphate', 'Boron (B)': 'Borax Decahydrate',
-            'Magnesium (Mg)': 'Epsom Salt', 'Calcium (Ca)': 'Gypsum or Lime',
+            [t.soilData.nitrogen]: 'Urea or DAP',
+            [t.soilData.phosphorus]: 'DAP or Single Super Phosphate',
+            [t.soilData.potassium]: 'Muriate of Potash (MOP)',
+            [t.soilData.sulfur]: 'Bensulf or Gypsum',
+            [t.soilData.zinc]: 'Zinc Sulphate',
+            [t.soilData.boron]: 'Borax Decahydrate',
+            [t.soilData.magnesium]: 'Epsom Salt',
+            [t.soilData.calcium]: 'Gypsum or Lime',
         };
 
+        const reasonTemplate = t.fertilizerRecs.reasonTemplate;
+
         insights.forEach(insight => {
-            if (insight.level === "Low" || insight.level === "Very Low" || insight.level === "Acidic" || insight.level === "Alkaline") {
+            if (insight.level === t.soilReport.levels.low || insight.level === t.soilReport.levels.acidic || insight.level === t.soilReport.levels.alkaline) {
                 const productName = nutrientMap[insight.title];
                 if (productName) {
+                    const reason = reasonTemplate
+                        .replace('{nutrient}', insight.title)
+                        .replace('{description}', insight.description.toLowerCase());
+                    
                     plan.push({
-                        nutrient: insight.title, productName, reason: `Your soil is deficient in ${insight.title}, which is crucial for ${insight.description.toLowerCase()}`,
+                        nutrient: insight.title,
+                        productName,
+                        reason,
                         icon: insight.icon,
                         links: [
                             { name: "IFFCO BAZAR", url: `https://www.iffcobazar.in/en/search?q=${encodeURIComponent(productName)}` },
@@ -952,12 +1238,15 @@ export default function CropDiagnosis() {
                 )}
                 {stage === "soilInsights" && (
                     <Card className="p-6 sm:p-8 animate-fade-in">
-                        <CardHeader className="text-center pb-6"><CardTitle className="text-3xl font-bold tracking-tight text-gray-900">Your Soil Health Report</CardTitle><CardDescription className="text-md text-gray-600 mt-2">A detailed breakdown of your soil's condition based on the provided data.</CardDescription></CardHeader>
+                        <CardHeader className="text-center pb-6">
+                            <CardTitle className="text-3xl font-bold tracking-tight text-gray-900">{t.soilReport.reportTitle}</CardTitle>
+                            <CardDescription className="text-md text-gray-600 mt-2">{t.soilReport.reportSubtitle}</CardDescription>
+                        </CardHeader>
                         <CardContent className="space-y-6">
-                            <InsightSection title="Core Properties" insights={generatedInsights.slice(0, 3)} />
-                            <InsightSection title="Primary Nutrients (NPK)" insights={generatedInsights.slice(3, 6)} />
-                            <InsightSection title="Secondary Nutrients" insights={generatedInsights.slice(6, 9)} />
-                            <InsightSection title="Micronutrients" insights={generatedInsights.slice(9)} />
+                            <InsightSection title={t.soilReport.coreProperties} insights={generatedInsights.slice(0, 3)} />
+                            <InsightSection title={t.soilReport.primaryNutrients} insights={generatedInsights.slice(3, 6)} />
+                            <InsightSection title={t.soilReport.secondaryNutrients} insights={generatedInsights.slice(6, 9)} />
+                            <InsightSection title={t.soilReport.micronutrients} insights={generatedInsights.slice(9)} />
                         </CardContent>
                         <CardFooter className="flex flex-col sm:flex-row justify-center gap-4 pt-8 mt-6 border-t border-gray-200">
                             <Button size="lg" className="w-full sm:w-auto" onClick={() => {
@@ -965,20 +1254,20 @@ export default function CropDiagnosis() {
                                 setFertilizerPlan(plan);
                                 setStage('recommendations');
                             }}>
-                                <ChevronsRight className="mr-2 h-5 w-5" />Get Guidance
+                                <ChevronsRight className="mr-2 h-5 w-5" />{t.actions.getGuidance}
                             </Button>
                             <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={() => setStage('upload')}>
                                 {t.actions.back}
-                            </Button>
-                            <Button size="lg" variant="ghost" className="w-full sm:w-auto" onClick={() => { setSoilDataLoaded(false); setHasSoilCard(null); setUploadedSoilCard(null); setStage('upload'); setCurrentTab('soil'); }}>
-                                Reset Soil Analysis
                             </Button>
                         </CardFooter>
                     </Card>
                 )}
                 {stage === "recommendations" && (
                     <div className="animate-fade-in bg-white p-6 sm:p-8 rounded-xl border border-gray-200 shadow-sm">
-                        <div className="text-center mb-10"><h1 className="text-3xl font-bold text-gray-800">Fertilizer Guidance</h1><p className="text-lg text-gray-600 mt-2">Recommended products based on your soil report.</p></div>
+                        <div className="text-center mb-10">
+                            <h1 className="text-3xl font-bold text-gray-800">{t.fertilizerRecs.title}</h1>
+                            <p className="text-lg text-gray-600 mt-2">{t.fertilizerRecs.subtitle}</p>
+                        </div>
                         {fertilizerPlan.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {fertilizerPlan.map(item => (
@@ -987,15 +1276,15 @@ export default function CropDiagnosis() {
                                             <div className="bg-green-100 p-3 rounded-full">{item.icon}</div>
                                             <div>
                                                 <CardTitle>{item.productName}</CardTitle>
-                                                <CardDescription>To correct {item.nutrient}</CardDescription>
+                                                <CardDescription>{t.fertilizerRecs.toCorrect.replace('{nutrient}', item.nutrient)}</CardDescription>
                                             </div>
                                         </CardHeader>
                                         <CardContent className="flex-grow">
-                                            <p className="text-sm text-gray-700">{item.reason}.</p>
+                                            <p className="text-sm text-gray-700">{item.reason}</p>
                                         </CardContent>
                                         <CardFooter className="flex flex-col gap-2 pt-4 border-t">
                                             <h4 className="w-full font-semibold text-sm mb-1 flex items-center gap-2">
-                                                <ShoppingCart className="h-4 w-4 text-primary" /> Buying Links
+                                                <ShoppingCart className="h-4 w-4 text-primary" /> {t.fertilizerRecs.buyLinks}
                                             </h4>
                                             {item.links.map(link => (
                                                 <a href={link.url} target="_blank" rel="noopener noreferrer" key={link.name} className="w-full">
@@ -1008,13 +1297,13 @@ export default function CropDiagnosis() {
                             </div>
                         ) : (
                             <div className="text-center py-12 bg-green-50 rounded-lg">
-                                <h3 className="text-2xl font-semibold text-green-800">Excellent Soil Health!</h3>
-                                <p className="text-gray-600 mt-2">No specific nutrient deficiencies were found.</p>
+                                <h3 className="text-2xl font-semibold text-green-800">{t.fertilizerRecs.noRecsTitle}</h3>
+                                <p className="text-gray-600 mt-2">{t.fertilizerRecs.noRecsSubtitle}</p>
                             </div>
                         )}
                         <div className="text-center mt-10">
                             <Button onClick={() => setStage('soilInsights')} variant="outline">
-                                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Insights
+                                <ArrowLeft className="mr-2 h-4 w-4" /> {t.actions.back} to Insights
                             </Button>
                         </div>
                     </div>
@@ -1056,11 +1345,11 @@ export default function CropDiagnosis() {
                             <CardFooter className="flex flex-col sm:flex-row justify-end gap-4 pt-4 mt-6 border-t border-gray-200">
                                 {fertilizerPlan.length > 0 && (
                                     <Button size="lg" className="w-full sm:w-auto" onClick={() => setStage("recommendations")}>
-                                        <ChevronsRight className="mr-2 h-5 w-5" /> Get Fertilizer Guidance
+                                        <ChevronsRight className="mr-2 h-5 w-5" /> {t.actions.getGuidance}
                                     </Button>
                                 )}
                                 <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={() => setStage("upload")}>
-                                    <ArrowLeft className="mr-2 h-4 w-4" /> Back to Analysis
+                                    <ArrowLeft className="mr-2 h-4 w-4" /> {t.actions.back} to Analysis
                                 </Button>
                             </CardFooter>
                         </Card>
