@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       .map(([key, value]) => `${key}: ${value}`)
       .join(', ');
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     // --- MODIFIED --- Use a dynamic prompt with the language
     const prompt = `

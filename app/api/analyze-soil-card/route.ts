@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const file: File = fileValue;
     const buffer = Buffer.from(await file.arrayBuffer());
     
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const prompt = `
       As an expert agricultural analyst, examine this image of a Soil Health Card.
