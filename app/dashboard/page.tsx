@@ -23,7 +23,7 @@ import {
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 import { useAuth } from "@/contexts/auth-context"
-import { useAdvisory } from "@/contexts/AdvisoryContext"
+import { useAdvisory } from "@/contexts/AdvisoryContext" // Import useAdvisory
 import { LanguageSelector } from "@/components/language-selector"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { NotificationBell } from "@/components/notification-bell"
@@ -32,7 +32,7 @@ import { HamburgerMenu } from "@/components/hamburger-menu"
 export default function Dashboard() {
   const { translations: t, currentLang } = useLanguage()
   const { user } = useAuth()
-  const { advisories } = useAdvisory()
+  const { advisories, latestSoilReport } = useAdvisory() // MODIFIED: Destructure latestSoilReport
   const [isListening, setIsListening] = useState(false)
   const [voiceStatus, setVoiceStatus] = useState<"idle" | "listening" | "processing">("idle")
   const [finalTranscript, setFinalTranscript] = useState("")
@@ -100,7 +100,46 @@ export default function Dashboard() {
 
   async function askGemini(q: string) {
     setVoiceStatus("processing")
+    
+    // MODIFIED: Logic to inject soil data and instruction into the prompt
+    let soilDataContext = "";
+    let soilCardPrefix = "";
+
+    if (latestSoilReport) {
+      // Filter out non-essential keys and format for the prompt
+      const reportDate = new Date(latestSoilReport.timestamp).toLocaleDateString(currentLang);
+      const reportEntries = Object.entries(latestSoilReport)
+        .filter(([key, value]) => key !== 'timestamp' && value !== undefined && value !== null && !isNaN(Number(value)))
+        .map(([key, value]) => `  - ${key.toUpperCase()}: ${value}`)
+        .join("\n");
+
+      if (reportEntries) {
+          soilDataContext = `
+---
+IMPORTANT CONTEXT: USER'S LATEST SOIL HEALTH REPORT (from ${reportDate})
+This is the user's latest soil health data. You MUST use this information to provide precise, customized farming advice about nutrient management, appropriate crops, or fertilizer recommendations.
+Soil Data (Key/Value):
+${reportEntries}
+---
+`;
+        
+        const prefixMap: Record<string, string> = {
+            en: "According to your soil health card...",
+            hi: "आपके मृदा स्वास्थ्य कार्ड के अनुसार...",
+            mr: "तुमच्या मृदा आरोग्य पत्रिकेनुसार...",
+            pa: "ਤੁਹਾਡੇ ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ ਦੇ ਅਨੁਸਾਰ...",
+            kn: "ನಿಮ್ಮ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಪ್ರಕಾರ...",
+            ta: "உங்கள் மண் சுகாதார அட்டைப்படி...",
+        };
+        
+        // Command to the AI: use the exact translated prefix
+        soilCardPrefix = `You must start your response with the exact phrase: "${prefixMap[currentLang] || prefixMap.en}".`;
+      }
+    }
+
     const system = `You are Krishi Mitra, an expert Indian agriculture assistant.
+${soilDataContext}
+${soilCardPrefix}
 You MUST reply only in the ${currentLang} language, using simple words.
 Provide a short, 6-5 sentence answer about farming, crops, weather, pests, or prices.
 Prioritize safe, practical, and low-cost advice.you have knowledge of every crop and state specific crop as well.
