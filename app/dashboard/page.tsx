@@ -19,33 +19,66 @@ import {
   Droplets,
   Wind,
   ShieldCheck,
+  History,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 import { useAuth } from "@/contexts/auth-context"
-import { useAdvisory } from "@/contexts/AdvisoryContext" // Import useAdvisory
+import { useAdvisory } from "@/contexts/AdvisoryContext"
 import { LanguageSelector } from "@/components/language-selector"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { NotificationBell } from "@/components/notification-bell"
 import { HamburgerMenu } from "@/components/hamburger-menu"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { toast } from "@/hooks/use-toast"
+
+interface VoiceMessage {
+  role: "user" | "bot";
+  text: string;
+  html?: string;
+}
+
+interface VoiceChat {
+  id: string;
+  title: string;
+  timestamp: number;
+  messages: VoiceMessage[];
+}
 
 export default function Dashboard() {
   const { translations: t, currentLang } = useLanguage()
   const { user } = useAuth()
-  const { advisories, latestSoilReport } = useAdvisory() // MODIFIED: Destructure latestSoilReport
+  const { advisories, latestSoilReport } = useAdvisory()
   const [isListening, setIsListening] = useState(false)
   const [voiceStatus, setVoiceStatus] = useState<"idle" | "listening" | "processing">("idle")
   const [finalTranscript, setFinalTranscript] = useState("")
   const [isVisible, setIsVisible] = useState(false)
   const router = useRouter()
+  const [voiceHistory, setVoiceHistory] = useState<VoiceChat[]>([]);
+  const [activeVoiceChatId, setActiveVoiceChatId] = useState<string | null>(null);
 
   useEffect(() => {
     setIsVisible(true)
+    const savedHistory = localStorage.getItem("krishi-mitra-voice-history");
+    if (savedHistory) {
+      try {
+        setVoiceHistory(JSON.parse(savedHistory));
+      } catch (e) {
+        console.error("Failed to parse voice history from localStorage", e);
+      }
+    }
   }, [])
 
-  /* ----------------------------------------------------------
-   * GEMINI  VOICE  ASSISTANT  –  START
-   * ---------------------------------------------------------- */
+  useEffect(() => {
+    localStorage.setItem("krishi-mitra-voice-history", JSON.stringify(voiceHistory));
+  }, [voiceHistory]);
+
+  const mdToHtml = (md: string): string =>
+  md.replace(/^## (.*$)/gim, "<h2 class='font-bold text-lg mt-4 mb-2 text-foreground'>$1</h2>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong class='font-semibold text-foreground'>$1</strong>")
+    .replace(/^[\*\-] (.*$)/gim, "<li class='ml-4 my-1 list-disc'>$1</li>")
+    .replace(/\n/g, "<br />");
+
   const KRISHI_INTRO: Record<string, string> = {
     en: "Hi, I am Krishi Mitra, your agriculture assistant. How can I help you today?",
     hi: "नमस्ते, मैं कृषि मित्र हूँ, आपका कृषि सहायक। मैं आपकी कैसे मदद कर सकता हूँ?",
@@ -101,12 +134,13 @@ export default function Dashboard() {
   async function askGemini(q: string) {
     setVoiceStatus("processing")
     
-    // MODIFIED: Logic to inject soil data and instruction into the prompt
     let soilDataContext = "";
     let soilCardPrefix = "";
 
-    if (latestSoilReport) {
-      // Filter out non-essential keys and format for the prompt
+    const farmingKeywords = ["crop", "soil", "fertilizer", "pesticide", "irrigation", "harvest", "planting", "sowing", "weather", "market price", "farm", "cultivation"];
+    const isFarmingQuery = farmingKeywords.some(keyword => q.toLowerCase().includes(keyword));
+
+    if (latestSoilReport && isFarmingQuery) {
       const reportDate = new Date(latestSoilReport.timestamp).toLocaleDateString(currentLang);
       const reportEntries = Object.entries(latestSoilReport)
         .filter(([key, value]) => key !== 'timestamp' && value !== undefined && value !== null && !isNaN(Number(value)))
@@ -132,7 +166,6 @@ ${reportEntries}
             ta: "உங்கள் மண் சுகாதார அட்டைப்படி...",
         };
         
-        // Command to the AI: use the exact translated prefix
         soilCardPrefix = `You must start your response with the exact phrase: "${prefixMap[currentLang] || prefixMap.en}".`;
       }
     }
@@ -141,7 +174,7 @@ ${reportEntries}
 ${soilDataContext}
 ${soilCardPrefix}
 You MUST reply only in the ${currentLang} language, using simple words.
-Provide a short, 6-5 sentence answer about farming, crops, weather, pests, or prices.
+Provide a short, 6-5 sentence answer.
 Prioritize safe, practical, and low-cost advice.you have knowledge of every crop and state specific crop as well.
 For clear audio, do not use emojis or end your reply with the letter 'n'.
 User asks: ${q}
@@ -157,6 +190,19 @@ Krishi Mitra:`
       let text = await res.text()
       text = text.replace(/[\r\n\t]+/g, " ").trim().replace(/n$/i, "").trim()
       if (!text) throw new Error("Empty reply")
+      
+      const newChat: VoiceChat = {
+        id: Date.now().toString(),
+        title: q,
+        timestamp: Date.now(),
+        messages: [
+          { role: "user", text: q },
+          { role: "bot", text: text, html: mdToHtml(text) },
+        ],
+      };
+      setVoiceHistory(prev => [newChat, ...prev]);
+      setActiveVoiceChatId(newChat.id);
+
       speak(text)
     } catch {
       const fallback: Record<string, string> = {
@@ -191,9 +237,6 @@ Krishi Mitra:`
     utter.onend = () => setVoiceStatus("idle")
     window.speechSynthesis.speak(utter)
   }
-  /* ----------------------------------------------------------
-   * GEMINI  VOICE  ASSISTANT  –  END
-   * ---------------------------------------------------------- */
 
   const getVoiceStatusText = () => {
     switch (voiceStatus) {
@@ -257,15 +300,61 @@ Krishi Mitra:`
                   <h2 className="text-2xl md:text-3xl font-bold text-foreground text-balance">
                     {getVoiceStatusText()}
                   </h2>
-                  <Button
-                    size="lg"
-                    onClick={handleVoiceActivation}
-                    disabled={voiceStatus !== "idle"}
-                    className="text-lg px-10 py-6 h-auto rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-                  >
-                    <Mic className="mr-3 h-6 w-6" />
-                    {t.dashboard.speakNow}
-                  </Button>
+                  <div className="flex justify-center items-center gap-4">
+                    <Button
+                      size="lg"
+                      onClick={handleVoiceActivation}
+                      disabled={voiceStatus !== "idle"}
+                      className="text-lg px-10 py-6 h-auto rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                    >
+                      <Mic className="mr-3 h-6 w-6" />
+                      {t.dashboard.speakNow}
+                    </Button>
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button
+                          size="lg"
+                          className="text-lg px-8 py-6 h-auto rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                        >
+                          <History className="h-5 w-5" />
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent className="w-full max-w-md p-0">
+                        <SheetHeader className="p-4 border-b">
+                          <SheetTitle>{t.dashboard.conversationHistory}</SheetTitle>
+                        </SheetHeader>
+                        <div className="h-full overflow-y-auto p-4 space-y-4">
+                          {voiceHistory.length > 0 ? voiceHistory.map(chat => (
+                            <Card key={chat.id} className="p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <div>
+                                  <h4 className="font-semibold text-sm">{chat.title}</h4>
+                                  <p className="text-xs text-muted-foreground">{new Date(chat.timestamp).toLocaleString()}</p>
+                                </div>
+                              </div>
+                              {chat.messages.map((msg, index) => (
+                                <div key={index} className="mb-2 text-left">
+                                  <p className={`font-semibold text-sm ${msg.role === 'user' ? 'text-primary' : 'text-foreground'}`}>
+                                    {msg.role === 'user' ? 'You:' : 'Krishi-Mitra:'}
+                                  </p>
+                                  <div className="flex items-start justify-between">
+                                    <div className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: msg.html || msg.text }}></div>
+                                    {msg.role === 'bot' && (
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" onClick={() => speak(msg.text)}>
+                                        <Volume2 className="h-4 w-4" />
+                                      </Button>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </Card>
+                          )) : (
+                            <p className="text-sm text-muted-foreground text-center mt-8">No history yet.</p>
+                          )}
+                        </div>
+                      </SheetContent>
+                    </Sheet>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -279,7 +368,6 @@ Krishi Mitra:`
               <QuickActionCard icon={<CloudRain />} title={t.dashboard.actions.weather} description={t.dashboard.actions.weatherDesc} onClick={() => handleNavigation("/weather")} />
               <QuickActionCard icon={<MessageCircle />} title={t.dashboard.actions.community} description={t.dashboard.actions.communityDesc} onClick={() => handleNavigation("/community")} />
               
-              {/* ✅ ADDED: The new Government Schemes card */}
               <QuickActionCard 
                 icon={<ShieldCheck />} 
                 title={t.dashboard.actions.governmentSchemes} 
@@ -300,7 +388,7 @@ Krishi Mitra:`
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {t.dashboard.advisories.map((advisory, index) => (
+                {advisories.map((advisory, index) => (
                   <div key={index} className="p-4 bg-gradient-to-r from-primary/5 to-transparent rounded-2xl border-l-4 border-primary space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-semibold text-sm text-balance">{advisory.title}</h4>
