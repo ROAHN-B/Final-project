@@ -3,38 +3,24 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { useAuth } from "@/contexts/auth-context"; // ADDED
-import { supabase } from "@/lib/supabaseClient"; // ADDED
+import { useAuth } from "@/contexts/auth-context";
+import { supabase } from "@/lib/supabaseClient";
 
-// Define the shape of a single notification
 interface Notification {
   id: number;
   title: string;
   description: string;
-  type: "weather" | "market"; // The allowed types
+  type: "weather" | "market";
   read: boolean;
 }
 
-// Define the shape of soil report data
 interface SoilReport {
-  ph: number;
-  ec: number;
-  oc: number;
-  n: number;
-  p: number;
-  k: number;
-  s: number;
-  ca: number;
-  mg: number;
-  zn: number;
-  b: number;
-  fe: number;
-  mn: number;
-  cu: number;
+  ph: number; ec: number; oc: number; n: number; p: number; k: number; s: number;
+  ca: number; mg: number; zn: number; b: number; fe: number; mn: number; cu: number;
   timestamp: number;
+  card_image_url?: string;
 }
 
-// Define the shape of your context data
 interface AdvisoryContextType {
   advisories: { title: string; description: string; priority: string; time: string }[];
   addAdvisory: (newAdvisory: { title: string; description: string; priority: string; time: string }) => void;
@@ -43,28 +29,26 @@ interface AdvisoryContextType {
   markAsRead: (id: number) => void;
   markAllAsRead: () => void;
   latestSoilReport: SoilReport | null;
+  allSoilReports: SoilReport[]; // State for all reports
   setLatestSoilReport: (report: SoilReport | null) => void;
 }
 
 const AdvisoryContext = createContext<AdvisoryContextType | undefined>(undefined);
 
-// MODIFIED: Explicitly type the array to prevent type inference issues.
 const sampleNotifications: Omit<Notification, "id" | "read">[] = [
     { title: "High Winds Alert", description: "Strong winds expected tomorrow morning. Secure young plants.", type: "weather" },
     { title: "Cotton Prices Up", description: "Cotton prices have increased by 3% in the Mumbai market.", type: "market" },
-    { title: "Rainfall Warning", description: "Heavy rainfall predicted for the next 48 hours.", type: "weather" },
-    { title: "Onion Market Alert", description: "Onion prices are expected to rise due to high demand.", type: "market" },
 ];
 
 export function AdvisoryProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth(); // MODIFIED: Get user from AuthContext
+  const { user } = useAuth();
   const [advisories, setAdvisories] = useState([
-    // Initial data for the advisories, you can fetch this from an API
     { title: "Pest Infestation Alert", description: "Monitor your crops for whitefly and aphids.", priority: "high", time: "2 hours ago" },
   ]);
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [latestSoilReport, setLatestSoilReport] = useState<SoilReport | null>(null);
+  const [allSoilReports, setAllSoilReports] = useState<SoilReport[]>([]); // New state
 
   const addAdvisory = (newAdvisory: { title: string; description: string; priority: string; time: string }) => {
     setAdvisories(prevAdvisories => [newAdvisory, ...prevAdvisories]);
@@ -82,58 +66,45 @@ export function AdvisoryProvider({ children }: { children: ReactNode }) {
     setNotifications([]);
   };
 
-  // NEW EFFECT: Load latest soil report on user change/login
   useEffect(() => {
-    async function fetchLatestSoilReport() {
+    async function fetchSoilReports() {
       if (!user?.id) {
         setLatestSoilReport(null);
+        setAllSoilReports([]);
         return;
       }
 
-      console.log(`Fetching latest soil report for user: ${user.id}`);
-      
       const { data, error } = await supabase
         .from('soil_reports')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false }) 
-        .limit(1)
-        .single();
+        .order('created_at', { ascending: false });
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 means "No rows found"
-        console.error("Error fetching latest soil report:", error);
+      if (error) {
+        console.error("Error fetching soil reports:", error);
         return;
       }
 
       if (data) {
-        // Map database response to frontend interface
-        const mappedReport: SoilReport = {
-          ph: data.ph,
-          ec: data.ec,
-          oc: data.oc,
-          n: data.n,
-          p: data.p,
-          k: data.k,
-          s: data.s,
-          ca: data.ca,
-          mg: data.mg,
-          zn: data.zn,
-          b: data.b,
-          fe: data.fe,
-          mn: data.mn,
-          cu: data.cu,
-          // Assuming the Supabase table has a 'created_at' column to indicate when the report was saved
-          timestamp: new Date(data.created_at || Date.now()).getTime(),
-        };
-        setLatestSoilReport(mappedReport);
-        console.log("Successfully loaded latest soil report.");
-      } else {
-         setLatestSoilReport(null);
+        const mappedReports: SoilReport[] = data.map(report => ({
+          ph: report.ph, ec: report.ec, oc: report.oc, n: report.n, p: report.p, k: report.k, s: report.s,
+          ca: report.ca, mg: report.mg, zn: report.zn, b: report.b, fe: report.fe, mn: report.mn, cu: report.cu,
+          timestamp: new Date(report.created_at || Date.now()).getTime(),
+          card_image_url: report.card_image_url,
+        }));
+        
+        setAllSoilReports(mappedReports);
+
+        if (mappedReports.length > 0) {
+          setLatestSoilReport(mappedReports[0]);
+        } else {
+          setLatestSoilReport(null);
+        }
       }
     }
 
-    fetchLatestSoilReport();
-  }, [user]); // Runs when the component mounts and whenever the user object changes (i.e., on login/logout)
+    fetchSoilReports();
+  }, [user]);
 
 
   useEffect(() => {
@@ -147,13 +118,12 @@ export function AdvisoryProvider({ children }: { children: ReactNode }) {
 
 
   return (
-    <AdvisoryContext.Provider value={{ advisories, addAdvisory, notifications, addNotification, markAsRead, markAllAsRead, latestSoilReport, setLatestSoilReport }}>
+    <AdvisoryContext.Provider value={{ advisories, addAdvisory, notifications, addNotification, markAsRead, markAllAsRead, latestSoilReport, allSoilReports, setLatestSoilReport }}>
       {children}
     </AdvisoryContext.Provider>
   );
 }
 
-// Custom hook for easy access to the context
 export function useAdvisory() {
   const context = useContext(AdvisoryContext);
   if (context === undefined) {

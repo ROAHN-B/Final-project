@@ -8,14 +8,16 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { User, MapPin, Leaf, Edit, Save, ArrowLeft, Camera, Tractor, BarChart3 } from "lucide-react"
+import { User, MapPin, Leaf, Edit, Save, ArrowLeft, Camera, Tractor, BarChart3, Download, FileText } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 import { useAuth } from "@/contexts/auth-context"
+import { useAdvisory } from "@/contexts/AdvisoryContext"
 
 function ProfilePageContent() {
   const { translations } = useLanguage()
   const { user, updateProfile } = useAuth()
+  const { allSoilReports } = useAdvisory() // Get all soil reports
   const [isEditing, setIsEditing] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const router = useRouter()
@@ -24,7 +26,7 @@ function ProfilePageContent() {
   const [userData, setUserData] = useState({
     fullName: user ? `${user.firstName} ${user.lastName}` : "",
     phone: user?.mobileNumber || "",
-    email: user?.email || "", // Assuming email might come from auth context
+    email: user?.email || "",
     village: user?.village || "",
     district: user?.district || "",
     state: user?.state || "",
@@ -34,13 +36,7 @@ function ProfilePageContent() {
     bio: user?.bio || "",
   })
 
-  // Dummy stats, would come from an API
-  const stats = {
-    totalQueries: 127,
-    cropsDiagnosed: 45,
-    advisoriesReceived: 89,
-    communityPosts: 23,
-  }
+  
 
   useEffect(() => {
     setIsVisible(true)
@@ -64,8 +60,7 @@ function ProfilePageContent() {
     if (user) {
       const [firstName, ...lastNameParts] = userData.fullName.split(" ")
       const lastName = lastNameParts.join(" ")
-
-      // Create an updated user profile object
+      
       const updatedUser = {
         ...user,
         firstName: firstName || user.firstName,
@@ -88,7 +83,6 @@ function ProfilePageContent() {
 
   const handleCancel = () => {
     if (user) {
-      // Reset form to original user data
       setUserData({
         fullName: `${user.firstName} ${user.lastName}`,
         phone: user.mobileNumber,
@@ -112,6 +106,9 @@ function ProfilePageContent() {
       </div>
     )
   }
+
+  // Filter reports that have a card_image_url
+  const reportsWithCards = allSoilReports.filter(report => report.card_image_url);
 
   return (
     <div className="min-h-screen bg-background">
@@ -215,31 +212,41 @@ function ProfilePageContent() {
           </Card>
         </div>
 
-        <Card className="glass-effect animate-slide-up" style={{ animationDelay: "0.6s" }}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" />{t?.statistics || "My Statistics"}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center p-2 rounded-lg bg-muted/50">
-                <div className="text-2xl font-bold text-primary">{stats.totalQueries}</div>
-                <div className="text-sm text-muted-foreground">{t?.stats?.totalQueries || "Queries"}</div>
+        
+
+        {reportsWithCards.length > 0 && (
+          <Card className="glass-effect animate-slide-up" style={{ animationDelay: "0.8s" }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Leaf className="h-5 w-5 text-primary" />
+                My Soil Health Cards
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {reportsWithCards.map((report, index) => (
+                    <div key={index} className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-lg border p-3">
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-8 w-8 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="font-semibold">Soil Health Card</p>
+                          <p className="text-xs text-muted-foreground">
+                            Uploaded on: {new Date(report.timestamp).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <a href={report.card_image_url} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+                        <Button className="w-full">
+                          <Download className="mr-2 h-4 w-4" />
+                          Download/View
+                        </Button>
+                      </a>
+                    </div>
+                ))}
               </div>
-              <div className="text-center p-2 rounded-lg bg-muted/50">
-                <div className="text-2xl font-bold text-primary">{stats.cropsDiagnosed}</div>
-                <div className="text-sm text-muted-foreground">{t?.stats?.cropsDiagnosed || "Diagnosed"}</div>
-              </div>
-              <div className="text-center p-2 rounded-lg bg-muted/50">
-                <div className="text-2xl font-bold text-primary">{stats.advisoriesReceived}</div>
-                <div className="text-sm text-muted-foreground">{t?.stats?.advisoriesReceived || "Advisories"}</div>
-              </div>
-              <div className="text-center p-2 rounded-lg bg-muted/50">
-                <div className="text-2xl font-bold text-primary">{stats.communityPosts}</div>
-                <div className="text-sm text-muted-foreground">{t?.stats?.communityPosts || "Posts"}</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   )
