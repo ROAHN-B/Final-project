@@ -17,6 +17,11 @@ interface WeatherInfo {
   condition: string
   humidity: string
   rainfall: string
+  feelsLike?: string;
+  loading?: string;
+  errorTitle?: string;
+  farmingAdvisory?: string;
+  basedOnForecast?: string;
 }
 
 interface PriceInfo {
@@ -108,6 +113,9 @@ export interface GlobalTranslations {
       bio: string
       yearsUnit: string
       acresUnit: string
+      humidity: string;
+      rainfall: string;
+      windSpeed: string;
     }
     placeholders: {
       fullName: string
@@ -198,6 +206,7 @@ export interface GlobalTranslations {
     voiceListening: string
     voiceProcessing: string
     speakNow: string
+    conversationHistory: string;
   }
 
   // Chatbot UI
@@ -313,6 +322,9 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         bio: "About Me",
         yearsUnit: "years",
         acresUnit: "acres",
+        humidity: "Humidity",
+        rainfall: "Rainfall",
+        windSpeed: "Wind",
       },
       placeholders: {
         fullName: "Enter your full name",
@@ -393,7 +405,17 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         { title: "Cotton Bollworm Alert", description: "Monitor your cotton crops for early signs", time: "2 hours ago", priority: "high" },
         { title: "Fertilizer Application", description: "Best time for nitrogen application", time: "1 day ago", priority: "medium" },
       ],
-      weather: { temp: "28°C", condition: "Partly Cloudy", humidity: "65%", rainfall: "20mm expected" },
+      weather: { 
+        temp: "28°C", 
+        condition: "Partly Cloudy", 
+        humidity: "65%", 
+        rainfall: "20mm expected",
+        feelsLike: "Feels like",
+        loading: "Fetching your local weather...",
+        errorTitle: "An Error Occurred",
+        farmingAdvisory: "Farming Advisory",
+        basedOnForecast: "Based on tomorrow's forecast"
+      },
       prices: [
         { crop: "Cotton", price: "₹6,200/quintal", change: "+2.5%" },
         { crop: "Wheat", price: "₹2,150/quintal", change: "-1.2%" },
@@ -402,6 +424,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       voiceListening: "Listening...",
       voiceProcessing: "Processing your question...",
       speakNow: "Speak now",
+      conversationHistory: "Conversation History"
     },
     chatbotUI: {
       online: "Online",
@@ -500,6 +523,9 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         bio: "मेरे बारे में",
         yearsUnit: "वर्ष",
         acresUnit: "एकड़",
+        humidity: "नमी",
+        rainfall: "वर्षा",
+        windSpeed: "हवा",
       },
       placeholders: {
         fullName: "अपना पूरा नाम दर्ज करें",
@@ -580,7 +606,17 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         { title: "कपास की सुंडी का अलर्ट", description: "शुरुआती लक्षणों के लिए अपनी कपास की फसलों की निगरानी करें", time: "2 घंटे पहले", priority: "high" },
         { title: "उर्वरक का प्रयोग", description: "नाइट्रोजन प्रयोग के लिए सबसे अच्छा समय", time: "1 दिन पहले", priority: "medium" },
       ],
-      weather: { temp: "28°C", condition: "आंशिक रूप से बादल छाए रहेंगे", humidity: "65%", rainfall: "20 मिमी अपेक्षित" },
+      weather: { 
+        temp: "28°C", 
+        condition: "आंशिक रूप से बादल छाए रहेंगे", 
+        humidity: "65%", 
+        rainfall: "20 मिमी अपेक्षित",
+        feelsLike: "महसूस होता है",
+        loading: "आपके स्थानीय मौसम को प्राप्त कर रहा है...",
+        errorTitle: "एक त्रुटि हुई",
+        farmingAdvisory: "खेती की सलाह",
+        basedOnForecast: "कल के पूर्वानुमान के आधार पर"
+      },
       prices: [
         { crop: "कपास", price: "₹6,200/क्विंटल", change: "+2.5%" },
         { crop: "गेहूं", price: "₹2,150/क्विंटल", change: "-1.2%" },
@@ -589,6 +625,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       voiceListening: "सुन रहा हूँ...",
       voiceProcessing: "आपके प्रश्न पर कार्रवाई हो रही है...",
       speakNow: "अभी बोलें",
+      conversationHistory: "बातचीत का इतिहास"
     },
     chatbotUI: {
       online: "ऑनलाइन",
@@ -686,6 +723,9 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         bio: "माझ्याबद्दल",
         yearsUnit: "वर्षे",
         acresUnit: "एकर",
+        humidity: "आर्द्रता",
+        rainfall: "पर्जन्यमान",
+        windSpeed: "वारा",
       },
       placeholders: {
         fullName: "तुमचे पूर्ण नाव टाका",
@@ -766,7 +806,17 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         { title: "कापसावरील बोंडअळीचा इशारा", description: "प्राथमिक लक्षणांसाठी तुमच्या कापूस पिकावर लक्ष ठेवा", time: "२ तासांपूर्वी", priority: "high" },
         { title: "खत व्यवस्थापन", description: "नत्रयुक्त खते देण्यासाठी सर्वोत्तम वेळ", time: "१ दिवसापूर्वी", priority: "medium" },
       ],
-      weather: { temp: "28°C", condition: "अंशतः ढगाळ", humidity: "65%", rainfall: "20मिमी अपेक्षित" },
+      weather: { 
+        temp: "28°C", 
+        condition: "अंशतः ढगाळ", 
+        humidity: "65%", 
+        rainfall: "20मिमी अपेक्षित",
+        feelsLike: "जाणवते",
+        loading: "तुमचे स्थानिक हवामान आणत आहे...",
+        errorTitle: "एक त्रुटी आली",
+        farmingAdvisory: "शेती सल्ला",
+        basedOnForecast: "उद्याच्या हवामानावर आधारित"
+      },
       prices: [
         { crop: "कापूस", price: "₹6,200/क्विंटल", change: "+2.5%" },
         { crop: "गहू", price: "₹2,150/क्विंटल", change: "-1.2%" },
@@ -775,6 +825,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       voiceListening: "ऐकत आहे...",
       voiceProcessing: "तुमच्या प्रश्नावर प्रक्रिया होत आहे...",
       speakNow: "आता बोला",
+      conversationHistory: "संभाषण इतिहास"
     },
     chatbotUI: {
       online: "ऑनलाइन",
@@ -872,6 +923,9 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         bio: "ਮੇਰੇ ਬਾਰੇ",
         yearsUnit: "ਸਾਲ",
         acresUnit: "ਏਕੜ",
+        humidity: "ਨਮੀ",
+        rainfall: "ਮੀਂਹ",
+        windSpeed: "ਹਵਾ",
       },
       placeholders: {
         fullName: "ਆਪਣਾ ਪੂਰਾ ਨਾਮ ਦਰਜ ਕਰੋ",
@@ -952,7 +1006,17 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         { title: "ਕਪਾਹ ਦੀ ਸੁੰਡੀ ਦਾ ਚੇਤਾਵਨੀ", description: "ਸ਼ੁਰੂਆਤੀ ਲੱਛਣਾਂ ਲਈ ਆਪਣੀ ਕਪਾਹ ਦੀਆਂ ਫਸਲਾਂ ਦੀ ਨਿਗਰਾਨੀ ਕਰੋ", time: "2 ਘੰਟੇ ਪਹਿਲਾਂ", priority: "high" },
         { title: "ਖਾਦ ਦੀ ਵਰਤੋਂ", description: "ਨਾਈਟ੍ਰੋਜਨ ਦੀ ਵਰਤੋਂ ਲਈ ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ", time: "1 ਦਿਨ ਪਹਿਲਾਂ", priority: "medium" },
       ],
-      weather: { temp: "28°C", condition: "ਅੰਸ਼ਕ ਤੌਰ 'ਤੇ ਬੱਦਲਵਾਈ", humidity: "65%", rainfall: "20mm ਦੀ ਉਮੀਦ" },
+      weather: { 
+        temp: "28°C", 
+        condition: "ਅੰਸ਼ਕ ਤੌਰ 'ਤੇ ਬੱਦਲਵਾਈ", 
+        humidity: "65%", 
+        rainfall: "20mm ਦੀ ਉਮੀਦ",
+        feelsLike: "ਮਹਿਸੂਸ ਹੁੰਦਾ ਹੈ",
+        loading: "ਤੁਹਾਡੇ ਸਥਾਨਕ ਮੌਸਮ ਨੂੰ ਪ੍ਰਾਪਤ ਕਰ ਰਿਹਾ ਹੈ...",
+        errorTitle: "ਇੱਕ ਗਲਤੀ ਆਈ",
+        farmingAdvisory: "ਖੇਤੀ ਸਲਾਹ",
+        basedOnForecast: "ਕੱਲ੍ਹ ਦੇ ਪੂਰਵ-ਅਨੁਮਾਨ 'ਤੇ ਆਧਾਰਿਤ"
+      },
       prices: [
         { crop: "ਕਪਾਹ", price: "₹6,200/ਕੁਇੰਟਲ", change: "+2.5%" },
         { crop: "ਕਣਕ", price: "₹2,150/ਕੁਇੰਟਲ", change: "-1.2%" },
@@ -961,6 +1025,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       voiceListening: "ਸੁਣ ਰਿਹਾ ਹੈ...",
       voiceProcessing: "ਤੁਹਾਡੇ ਸਵਾਲ ਦੀ ਪ੍ਰਕਿਰਿਆ ਕਰ ਰਿਹਾ ਹੈ...",
       speakNow: "ਹੁਣ ਬੋਲੋ",
+      conversationHistory: "ਗੱਲਬਾਤ ਦਾ ਇਤਿਹਾਸ"
     },
     chatbotUI: {
       online: "ਆਨਲਾਈਨ",
@@ -984,7 +1049,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
   },
   // Kannada Translations
   kn: {
-    title: "ਕ੍ਰਿਸ਼ੀಮಿತ್ರ",
+    title: "ಕೃಷಿಮಿತ್ರ",
     subtitle: "ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಕೃಷಿ ಸಲಹೆಗಾರ",
     description: "ನಿಮ್ಮ ಸ್ಥಳೀಯ ಭಾಷೆಯಲ್ಲಿ ತಕ್ಷಣದ ಬೆಳೆ ಸಲಹೆ, ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು ಮತ್ತು ಹವಾಮಾನ ನವೀಕರಣಗಳನ್ನು ಪಡೆಯಿರಿ",
     getStarted: "ಪ್ರಾರಂಭಿಸಿ",
@@ -1058,6 +1123,9 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         bio: "ನನ್ನ ಬಗ್ಗೆ",
         yearsUnit: "ವರ್ಷಗಳು",
         acresUnit: "ಎಕರೆ",
+        humidity: "ಆರ್ದ್ರತೆ",
+        rainfall: "ಮಳೆ",
+        windSpeed: "ಗಾಳಿ",
       },
       placeholders: {
         fullName: "ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರು ನಮೂದಿಸಿ",
@@ -1138,7 +1206,17 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         { title: "ಹತ್ತಿ ಕಾಯಿ ಕೊರಕ ಎಚ್ಚರಿಕೆ", description: "ನಿಮ್ಮ ಹತ್ತಿ ಬೆಳೆಗಳಲ್ಲಿ ಆರಂಭಿಕ ಚಿಹ್ನೆಗಳಿಗಾಗಿ ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಿ", time: "2 ಗಂಟೆಗಳ ಹಿಂದೆ", priority: "high" },
         { title: "ಗೊಬ್ಬರ ಅನ್ವಯ", description: "ಸಾರಜನಕ ಅನ್ವಯಕ್ಕೆ ಉತ್ತಮ ಸಮಯ", time: "1 ದಿನದ ಹಿಂದೆ", priority: "medium" },
       ],
-      weather: { temp: "28°C", condition: "ಭಾಗಶಃ ಮೋಡ ಕವಿದಿದೆ", humidity: "65%", rainfall: "20ಮಿಮೀ ನಿರೀಕ್ಷಿಸಲಾಗಿದೆ" },
+      weather: { 
+        temp: "28°C", 
+        condition: "ಭಾಗಶಃ ಮೋಡ ಕವಿದಿದೆ", 
+        humidity: "65%", 
+        rainfall: "20ಮಿಮೀ ನಿರೀಕ್ಷಿಸಲಾಗಿದೆ",
+        feelsLike: "ಅನುಭವ",
+        loading: "ನಿಮ್ಮ ಸ್ಥಳೀಯ ಹವಾಮಾನವನ್ನು ತರಲಾಗುತ್ತಿದೆ...",
+        errorTitle: "ಒಂದು ದೋಷ ಸಂಭವಿಸಿದೆ",
+        farmingAdvisory: "ಕೃಷಿ ಸಲಹೆ",
+        basedOnForecast: "ನಾಳಿನ ಮುನ್ಸೂಚನೆಯ ಆಧಾರದ ಮೇಲೆ"
+      },
       prices: [
         { crop: "ಹತ್ತಿ", price: "₹6,200/ಕ್ವಿಂಟಾಲ್", change: "+2.5%" },
         { crop: "ಗೋಧಿ", price: "₹2,150/ಕ್ವಿಂಟಾಲ್", change: "-1.2%" },
@@ -1147,6 +1225,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       voiceListening: "ಕೇಳುತ್ತಿದೆ...",
       voiceProcessing: "ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸುತ್ತಿದೆ...",
       speakNow: "ಈಗ ಮಾತನಾಡಿ",
+      conversationHistory: "ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸ"
     },
     chatbotUI: {
       online: "ಆನ್‌ಲೈನ್",
@@ -1175,7 +1254,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     description: "உங்கள் உள்ளூர் மொழியில் உடனடி பயிர் ஆலோசனை, சந்தை விலைகள் மற்றும் வானிலை புதுப்பிப்புகளைப் பெறுங்கள்",
     getStarted: "தொடங்குங்கள்",
     exploreFeatures: "அம்சங்களை ஆராயவும்",
-    logout: "ವೆளியேறு",
+    logout: "வெளியேறு",
     login: "உள்நுழை",
     signup: "பதிவுசெய்",
     continue: "தொடரவும்",
@@ -1244,6 +1323,9 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         bio: "என்னை பற்றி",
         yearsUnit: "ஆண்டுகள்",
         acresUnit: "ஏக்கர்",
+        humidity: "ஈரப்பதம்",
+        rainfall: "மழைப்பொழிவு",
+        windSpeed: "காற்று",
       },
       placeholders: {
         fullName: "உங்கள் முழு பெயரை உள்ளிடவும்",
@@ -1324,7 +1406,17 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         { title: "பருத்தி காய் புழு எச்சரிக்கை", description: "பருத்தி பயிர்களில் ஆரம்ப அறிகுறிகளுக்கு கண்காணிக்கவும்", time: "2 மணிநேரத்திற்கு முன்", priority: "high" },
         { title: "உர பயன்பாடு", description: "நைட்ரஜன் பயன்பாட்டிற்கு சிறந்த நேரம்", time: "1 நாளுக்கு முன்", priority: "medium" },
       ],
-      weather: { temp: "28°C", condition: "பகுதி மேகமூட்டம்", humidity: "65%", rainfall: "20மிமீ எதிர்பார்க்கப்படுகிறது" },
+      weather: { 
+        temp: "28°C", 
+        condition: "பகுதி மேகமூட்டம்", 
+        humidity: "65%", 
+        rainfall: "20மிமீ எதிர்பார்க்கப்படுகிறது",
+        feelsLike: "உணர்கிறது",
+        loading: "உங்கள் உள்ளூர் வானிலையைப் பெறுகிறது...",
+        errorTitle: "ஒரு பிழை ஏற்பட்டது",
+        farmingAdvisory: "விவசாய ஆலோசனை",
+        basedOnForecast: "நாளைய முன்னறிவிப்பின் அடிப்படையில்"
+      },
       prices: [
         { crop: "பருத்தி", price: "₹6,200/குவிண்டால்", change: "+2.5%" },
         { crop: "கோதுமை", price: "₹2,150/குவிண்டால்", change: "-1.2%" },
@@ -1333,6 +1425,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       voiceListening: "கேட்கிறது...",
       voiceProcessing: "உங்கள் கேள்வியை செயலாக்குகிறது...",
       speakNow: "இப்போது பேசுங்கள்",
+      conversationHistory: "உரையாடல் வரலாறு"
     },
     chatbotUI: {
       online: "ஆன்லைனில்",

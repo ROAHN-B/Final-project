@@ -1,3 +1,4 @@
+// app/dashboard/page.tsx
 "use client"
 
 import React, { useState, useEffect } from "react"
@@ -45,6 +46,14 @@ interface VoiceChat {
   messages: VoiceMessage[];
 }
 
+// Weather data interface
+interface WeatherData {
+  temp: string;
+  condition: string;
+  humidity: string;
+  rainfall: string;
+}
+
 export default function Dashboard() {
   const { translations: t, currentLang } = useLanguage()
   const { user } = useAuth()
@@ -56,6 +65,8 @@ export default function Dashboard() {
   const router = useRouter()
   const [voiceHistory, setVoiceHistory] = useState<VoiceChat[]>([]);
   const [activeVoiceChatId, setActiveVoiceChatId] = useState<string | null>(null);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
 
   useEffect(() => {
     setIsVisible(true)
@@ -67,7 +78,41 @@ export default function Dashboard() {
         console.error("Failed to parse voice history from localStorage", e);
       }
     }
-  }, [])
+
+    // Fetch weather data
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}&units=metric`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch weather data');
+          }
+          const data = await response.json();
+          setWeatherData({
+            temp: `${Math.round(data.main.temp)}°C`,
+            condition: data.weather[0].main,
+            humidity: `${data.main.humidity}%`,
+            rainfall: data.rain ? `${data.rain['1h']}mm` : '0mm'
+          });
+        } catch (error) {
+          console.error(error);
+          // Set to default if API fails
+          setWeatherData(t.dashboard.weather);
+        } finally {
+          setWeatherLoading(false);
+        }
+      }, () => {
+        // Geolocation denied, use default
+        setWeatherData(t.dashboard.weather);
+        setWeatherLoading(false);
+      });
+    } else {
+      // Geolocation not supported, use default
+      setWeatherData(t.dashboard.weather);
+      setWeatherLoading(false);
+    }
+  }, [t.dashboard.weather]);
 
   useEffect(() => {
     localStorage.setItem("krishi-mitra-voice-history", JSON.stringify(voiceHistory));
@@ -411,22 +456,34 @@ Krishi Mitra:`
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="text-center">
-                  <div className="text-4xl font-bold gradient-text mb-2">{t.dashboard.weather?.temp || "28°C"}</div>
-                  <div className="text-base text-muted-foreground font-medium">{t.dashboard.weather?.condition || "Partly Cloudy"}</div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-card/50 rounded-2xl">
-                    <Droplets className="h-5 w-5 text-primary mx-auto mb-2" />
-                    <div className="text-sm text-muted-foreground">{t.profile.fields.humidity || "Humidity"}</div>
-                    <div className="font-bold text-foreground">{t.dashboard.weather?.humidity || "65%"}</div>
+                {weatherLoading ? (
+                  <div className="flex justify-center items-center h-24">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
-                  <div className="text-center p-3 bg-card/50 rounded-2xl">
-                    <Wind className="h-5 w-5 text-primary mx-auto mb-2" />
-                    <div className="text-sm text-muted-foreground">{t.profile.fields.rainfall || "Rainfall"}</div>
-                    <div className="font-bold text-foreground">{t.dashboard.weather?.rainfall || "2mm"}</div>
+                ) : weatherData ? (
+                  <>
+                    <div className="text-center">
+                      <div className="text-4xl font-bold gradient-text mb-2">{weatherData.temp}</div>
+                      <div className="text-base text-muted-foreground font-medium">{weatherData.condition}</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-3 bg-card/50 rounded-2xl">
+                        <Droplets className="h-5 w-5 text-primary mx-auto mb-2" />
+                        <div className="text-sm text-muted-foreground">{t.profile.fields.humidity}</div>
+                        <div className="font-bold text-foreground">{weatherData.humidity}</div>
+                      </div>
+                      <div className="text-center p-3 bg-card/50 rounded-2xl">
+                        <Wind className="h-5 w-5 text-primary mx-auto mb-2" />
+                        <div className="text-sm text-muted-foreground">{t.profile.fields.rainfall}</div>
+                        <div className="font-bold text-foreground">{weatherData.rainfall}</div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center text-muted-foreground">
+                    Could not load weather data.
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
 
