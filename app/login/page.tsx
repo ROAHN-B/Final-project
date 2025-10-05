@@ -1,29 +1,33 @@
-// app/login/page.tsx
-"use client"
+// app/login/page.tsx (Updated with pre-check logic)
+"use client";
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { MapPin, Globe, Leaf, LogIn, UserPlus, AlertCircle } from "lucide-react"
-import { useAuth, User } from "@/contexts/auth-context"
-import { useLanguage, type Language } from "@/contexts/language-context"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
-import { toast } from "@/hooks/use-toast"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MapPin, Globe, Leaf, LogIn, UserPlus, AlertCircle } from "lucide-react";
+import { useAuth, User } from "@/contexts/auth-context";
+import { useLanguage, type Language } from "@/contexts/language-context";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { toast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 interface LocationData {
   [key: string]: {
-    name: string
+    name: string;
     districts: {
-      [key: string]: string[]
-    }
-  }
+      [key: string]: string[];
+    };
+  };
 }
 
 const locationData: LocationData = {
@@ -69,117 +73,139 @@ const locationData: LocationData = {
       Meerut: ["Meerut City", "Ghaziabad", "Gautam Buddha Nagar", "Bulandshahr"],
     },
   },
-}
+};
 
 export default function LoginPage() {
-  const [isSignUp, setIsSignUp] = useState(false)
-  const [mobileNumber, setMobileNumber] = useState("")
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [selectedState, setSelectedState] = useState("")
-  const [selectedDistrict, setSelectedDistrict] = useState("")
-  const [selectedTaluka, setSelectedTaluka] = useState("")
-  const [selectedVillage, setSelectedVillage] = useState("")
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>("en")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [step, setStep] = useState<"mobile" | "otp">("mobile");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedTaluka, setSelectedTaluka] = useState("");
+  const [selectedVillage, setSelectedVillage] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>("en");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter()
-  const { login, register, isAuthenticated, user } = useAuth()
-  const { translations: t, setCurrentLang } = useLanguage()
+  const router = useRouter();
+  const { login, register, isAuthenticated, user } = useAuth();
+  const { translations: t, setCurrentLang } = useLanguage();
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      router.push("/dashboard")
+      router.push("/dashboard");
     }
-  }, [isAuthenticated, user, router])
+  }, [isAuthenticated, user, router]);
 
   const handleMobileNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "") // Only allow digits
+    const value = e.target.value.replace(/\D/g, "");
     if (value.length <= 10) {
-      setMobileNumber(value)
-      setError(null)
+      setMobileNumber(value);
+      setError(null);
     }
-  }
-
-  const validateMobileNumber = (num: string) => {
-    return /^\d{10}$/.test(num)
-  }
-  
-  // Maps database snake_case fields to application camelCase fields
-  const mapDbUserToAppUser = (dbUser: any): User => {
-    return {
-      id: dbUser.id,
-      mobileNumber: dbUser.mobile_number,
-      firstName: dbUser.first_name,
-      lastName: dbUser.last_name,
-      state: dbUser.state,
-      district: dbUser.district,
-      taluka: dbUser.taluka,
-      village: dbUser.village,
-      language: dbUser.language,
-    };
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+  const validateMobileNumber = (num: string) => /^\d{10}$/.test(num);
+
+  const mapDbUserToAppUser = (dbUser: any): User => ({
+    id: dbUser.id,
+    mobileNumber: dbUser.mobile_number,
+    firstName: dbUser.first_name,
+    lastName: dbUser.last_name,
+    state: dbUser.state,
+    district: dbUser.district,
+    taluka: dbUser.taluka,
+    village: dbUser.village,
+    language: dbUser.language,
+  });
+
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
     if (!validateMobileNumber(mobileNumber)) {
-      setError(t.invalidMobile || "Please enter a valid 10-digit mobile number")
-      return
+      setError(t.invalidMobile || "Please enter a valid 10-digit mobile number");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobileNumber, isSignUp: false }),
+      const response = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobileNumber }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed.');
+        // *** NEW LOGIC HERE ***
+        // If the user is not found, switch to the sign-up form.
+        if (response.status === 404) {
+          setError(data.error);
+          setIsSignUp(true); // Switch UI to signup mode
+          setStep("mobile");   // Keep them on the form page
+          return;
+        }
+        throw new Error(data.error || "Failed to send OTP.");
       }
 
-      login(mapDbUserToAppUser(data));
-      toast.success(t.loginSuccess || "Login successful!")
+      toast({ title: "OTP Sent", description: "An OTP has been sent to your mobile number." });
+      setStep("otp");
     } catch (err: any) {
       setError(err.message);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (otp.length !== 6) {
+      setError("Please enter a valid 6-digit OTP.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobileNumber, otp }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Login failed.");
+
+      login(mapDbUserToAppUser(data));
+      toast({ title: t.loginSuccess || "Login successful!" });
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-
-    if (
-      !firstName ||
-      !lastName ||
-      !mobileNumber ||
-      !selectedState ||
-      !selectedDistrict ||
-      !selectedTaluka ||
-      !selectedVillage ||
-      !selectedLanguage
-    ) {
-      setError(t.fillAllFields || "Please fill all fields")
-      return
+    e.preventDefault();
+    setError(null);
+    if (!firstName || !lastName || !mobileNumber || !selectedState || !selectedDistrict || !selectedTaluka || !selectedVillage || !selectedLanguage) {
+      setError(t.fillAllFields || "Please fill all fields");
+      return;
     }
-
     if (!validateMobileNumber(mobileNumber)) {
-      setError(t.invalidMobile || "Please enter a valid 10-digit mobile number")
-      return
+      setError(t.invalidMobile || "Please enter a valid 10-digit mobile number");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mobileNumber,
           firstName,
@@ -194,42 +220,30 @@ export default function LoginPage() {
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Sign up failed.');
-      }
+      if (!response.ok) throw new Error(data.error || "Sign up failed.");
 
       setCurrentLang(selectedLanguage);
       register(mapDbUserToAppUser(data));
-      toast.success(t.signupSuccess || "Registration successful!");
+      toast({ title: t.signupSuccess || "Registration successful!" });
     } catch (err: any) {
       setError(err.message);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  const getDistricts = () => {
-    return selectedState ? Object.keys(locationData[selectedState].districts) : []
-  }
+  const getDistricts = () => (selectedState ? Object.keys(locationData[selectedState].districts) : []);
+  const getTalukas = () => (selectedState && selectedDistrict ? locationData[selectedState].districts[selectedDistrict] : []);
+  const getVillages = () => (selectedState && selectedDistrict && selectedTaluka ? [selectedTaluka] : []);
 
-  const getTalukas = () => {
-    return selectedState && selectedDistrict ? locationData[selectedState].districts[selectedDistrict] : []
-  }
-
-  const getVillages = () => {
-    // For simplicity, talukas are treated as villages in this demo
-    return selectedState && selectedDistrict && selectedTaluka ? [selectedTaluka] : []
-  }
-
-  const languageOptions: { value: Language; label: string }[] = [
+  const languageOptions = [
     { value: "en", label: "English" },
     { value: "hi", label: "हिंदी" },
     { value: "mr", label: "मराठी" },
     { value: "pa", label: "ਪੰਜਾਬੀ" },
     { value: "kn", label: "ಕನ್ನಡ" },
     { value: "ta", label: "தமிழ்" },
-  ]
+  ];
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/10 container-padding py-8">
@@ -258,32 +272,19 @@ export default function LoginPage() {
 
           {isSignUp ? (
             <form onSubmit={handleSignUp} className="space-y-6">
+              {/* ... (Your full sign-up form JSX remains unchanged here) ... */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-3">
                   <Label htmlFor="firstName" className="text-base font-semibold">
                     {t.firstName}
                   </Label>
-                  <Input
-                    id="firstName"
-                    placeholder={t.firstName}
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="h-12 text-base rounded-xl border-2 focus:border-primary"
-                    required
-                  />
+                  <Input id="firstName" placeholder={t.firstName} value={firstName} onChange={(e) => setFirstName(e.target.value)} className="h-12 text-base rounded-xl border-2 focus:border-primary" required />
                 </div>
                 <div className="space-y-3">
                   <Label htmlFor="lastName" className="text-base font-semibold">
                     {t.lastName}
                   </Label>
-                  <Input
-                    id="lastName"
-                    placeholder={t.lastName}
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="h-12 text-base rounded-xl border-2 focus:border-primary"
-                    required
-                  />
+                  <Input id="lastName" placeholder={t.lastName} value={lastName} onChange={(e) => setLastName(e.target.value)} className="h-12 text-base rounded-xl border-2 focus:border-primary" required />
                 </div>
               </div>
 
@@ -291,18 +292,9 @@ export default function LoginPage() {
                 <Label htmlFor="mobileNumber" className="text-base font-semibold">
                   {t.mobileNumber}
                 </Label>
-                <Input
-                  id="mobileNumber"
-                  type="tel"
-                  placeholder="9876543210"
-                  value={mobileNumber}
-                  onChange={handleMobileNumberChange}
-                  maxLength={10}
-                  className="h-12 text-base rounded-xl border-2 focus:border-primary"
-                  required
-                />
+                <Input id="mobileNumber" type="tel" placeholder="9876543210" value={mobileNumber} onChange={handleMobileNumberChange} maxLength={10} className="h-12 text-base rounded-xl border-2 focus:border-primary" required />
               </div>
-
+              
               <div className="space-y-3">
                 <Label htmlFor="language" className="text-base font-semibold">
                   {t.selectLanguage}
@@ -324,147 +316,115 @@ export default function LoginPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-3">
-                  <Label htmlFor="state" className="text-base font-semibold">
-                    {t.selectState}
-                  </Label>
+                  <Label htmlFor="state" className="text-base font-semibold">{t.selectState}</Label>
                   <Select value={selectedState} onValueChange={setSelectedState}>
                     <SelectTrigger className="h-12 text-base rounded-xl border-2">
                       <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
                       <SelectValue placeholder={t.selectState} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      {Object.entries(locationData).map(([code, data]) => (
-                        <SelectItem key={code} value={code} className="text-base py-3">
-                          {data.name}
-                        </SelectItem>
-                      ))}
+                      {Object.entries(locationData).map(([code, data]) => (<SelectItem key={code} value={code} className="text-base py-3">{data.name}</SelectItem>))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-3">
-                  <Label htmlFor="district" className="text-base font-semibold">
-                    {t.selectDistrict}
-                  </Label>
+                  <Label htmlFor="district" className="text-base font-semibold">{t.selectDistrict}</Label>
                   <Select value={selectedDistrict} onValueChange={setSelectedDistrict} disabled={!selectedState}>
                     <SelectTrigger className="h-12 text-base rounded-xl border-2">
                       <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
                       <SelectValue placeholder={t.selectDistrict} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      {getDistricts().map((district) => (
-                        <SelectItem key={district} value={district} className="text-base py-3">
-                          {district}
-                        </SelectItem>
-                      ))}
+                      {getDistricts().map((district) => (<SelectItem key={district} value={district} className="text-base py-3">{district}</SelectItem>))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-3">
-                  <Label htmlFor="taluka" className="text-base font-semibold">
-                    {t.selectTaluka}
-                  </Label>
+                  <Label htmlFor="taluka" className="text-base font-semibold">{t.selectTaluka}</Label>
                   <Select value={selectedTaluka} onValueChange={setSelectedTaluka} disabled={!selectedDistrict}>
                     <SelectTrigger className="h-12 text-base rounded-xl border-2">
                       <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
                       <SelectValue placeholder={t.selectTaluka} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      {getTalukas().map((taluka) => (
-                        <SelectItem key={taluka} value={taluka} className="text-base py-3">
-                          {taluka}
-                        </SelectItem>
-                      ))}
+                      {getTalukas().map((taluka) => (<SelectItem key={taluka} value={taluka} className="text-base py-3">{taluka}</SelectItem>))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-3">
-                  <Label htmlFor="village" className="text-base font-semibold">
-                    {t.selectVillage}
-                  </Label>
+                  <Label htmlFor="village" className="text-base font-semibold">{t.selectVillage}</Label>
                   <Select value={selectedVillage} onValueChange={setSelectedVillage} disabled={!selectedTaluka}>
                     <SelectTrigger className="h-12 text-base rounded-xl border-2">
                       <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
                       <SelectValue placeholder={t.selectVillage} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      {getVillages().map((village) => (
-                        <SelectItem key={village} value={village} className="text-base py-3">
-                          {village}
-                        </SelectItem>
-                      ))}
+                      {getVillages().map((village) => (<SelectItem key={village} value={village} className="text-base py-3">{village}</SelectItem>))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full h-14 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full h-14 text-lg font-semibold rounded-2xl" disabled={isLoading}>
                 {isLoading ? <LoadingSpinner size="sm" /> : <UserPlus className="mr-3 h-5 w-5" />}
                 {isLoading ? "Registering..." : t.register}
               </Button>
-
               <div className="text-center pt-4">
                 <p className="text-base text-muted-foreground">
                   {t.alreadyHaveAccount}{" "}
-                  <Button
-                    variant="link"
-                    onClick={() => setIsSignUp(false)}
-                    className="p-0 h-auto text-base font-semibold text-primary hover:text-primary/80"
-                  >
+                  <Button variant="link" onClick={() => { setIsSignUp(false); setError(null); }} className="p-0 h-auto text-base font-semibold text-primary hover:text-primary/80">
                     {t.login}
                   </Button>
                 </p>
               </div>
             </form>
-          ) : (
-            <form onSubmit={handleLogin} className="space-y-8">
+          ) : step === "mobile" ? (
+            <form onSubmit={handleSendOtp} className="space-y-8">
               <div className="space-y-3">
-                <Label htmlFor="mobileNumber" className="text-base font-semibold">
-                  {t.mobileNumber}
-                </Label>
-                <Input
-                  id="mobileNumber"
-                  type="tel"
-                  placeholder="9876543210"
-                  value={mobileNumber}
-                  onChange={handleMobileNumberChange}
-                  maxLength={10}
-                  className="h-12 text-base rounded-xl border-2 focus:border-primary"
-                  required
-                />
+                <Label htmlFor="mobileNumber" className="text-base font-semibold">{t.mobileNumber}</Label>
+                <Input id="mobileNumber" type="tel" placeholder="9876543210" value={mobileNumber} onChange={handleMobileNumberChange} maxLength={10} className="h-12 text-base rounded-xl" required />
               </div>
-
-              <Button
-                type="submit"
-                className="w-full h-14 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full h-14 text-lg font-semibold rounded-2xl" disabled={isLoading}>
                 {isLoading ? <LoadingSpinner size="sm" /> : <LogIn className="mr-3 h-5 w-5" />}
-                {isLoading ? "Logging in..." : t.continue}
+                {isLoading ? "Sending OTP..." : "Send OTP"}
               </Button>
-
               <div className="text-center pt-4">
                 <p className="text-base text-muted-foreground">
                   {t.dontHaveAccount}{" "}
-                  <Button
-                    variant="link"
-                    onClick={() => setIsSignUp(true)}
-                    className="p-0 h-auto text-base font-semibold text-primary hover:text-primary/80"
-                  >
+                  <Button variant="link" onClick={() => { setIsSignUp(true); setError(null); }} className="p-0 h-auto text-base font-semibold text-primary">
                     {t.signup}
                   </Button>
                 </p>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOtp} className="space-y-8">
+              <div className="space-y-3 flex flex-col items-center">
+                <Label htmlFor="otp" className="text-base font-semibold text-center">
+                  Enter OTP sent to +91 {mobileNumber}
+                </Label>
+                <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} /> <InputOTPSlot index={1} /> <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} /> <InputOTPSlot index={4} /> <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+              <Button type="submit" className="w-full h-14 text-lg font-semibold rounded-2xl" disabled={isLoading}>
+                {isLoading ? <LoadingSpinner size="sm" /> : <LogIn className="mr-3 h-5 w-5" />}
+                {isLoading ? "Verifying..." : "Verify OTP & Login"}
+              </Button>
+              <div className="text-center pt-4">
+                <Button variant="link" onClick={() => { setStep("mobile"); setError(null); setOtp(""); }} className="text-base">
+                  Change Mobile Number
+                </Button>
               </div>
             </form>
           )}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
