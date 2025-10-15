@@ -39,7 +39,8 @@ import {
     ShoppingCart,
     ExternalLink,
     ChevronsRight,
-    Search
+    Search,
+    Map
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
@@ -113,6 +114,9 @@ interface StructuredGuidance {
 interface Lab {
     name: string;
     address: string;
+    lat: number;
+    lon: number;
+    distance?: number;
 }
 
 const diagnosisLanguages: Record<string, any> = {
@@ -205,7 +209,9 @@ const diagnosisLanguages: Record<string, any> = {
             findingLabs: "Finding nearby labs using your location...",
             locationError: "Could not access your location. Please enable location services in your browser settings or enter data manually.",
             noLabsFound: "No government labs found nearby. Please try searching online or enter data manually.",
-            enterManuallyButton: "Enter Data Manually Instead"
+            enterManuallyButton: "Enter Data Manually Instead",
+            getDirections: "Get Directions",
+            kmAway: "km away"
         }
     },
     hi: {
@@ -297,7 +303,9 @@ const diagnosisLanguages: Record<string, any> = {
             findingLabs: "आपके स्थान का उपयोग करके आस-पास की प्रयोगशालाएं खोजी जा रही हैं...",
             locationError: "आपका स्थान एक्सेस नहीं हो सका। कृपया अपनी ब्राउज़र सेटिंग्स में स्थान सेवाएं सक्षम करें या मैन्युअल रूप से डेटा दर्ज करें।",
             noLabsFound: "आस-पास कोई सरकारी प्रयोगशाला नहीं मिली। कृपया ऑनलाइन खोजने का प्रयास करें या मैन्युअल रूप से डेटा दर्ज करें।",
-            enterManuallyButton: "इसके बजाय मैन्युअल रूप से डेटा दर्ज करें"
+            enterManuallyButton: "इसके बजाय मैन्युअल रूप से डेटा दर्ज करें",
+            getDirections: "दिशा - निर्देश प्राप्त करें",
+            kmAway: "किमी दूर"
         }
     },
     mr: {
@@ -389,7 +397,9 @@ const diagnosisLanguages: Record<string, any> = {
             findingLabs: "तुमचे स्थान वापरून जवळच्या प्रयोगशाळा शोधत आहे...",
             locationError: "तुमचे स्थान मिळवू शकलो नाही. कृपया तुमच्या ब्राउझर सेटिंग्जमध्ये स्थान सेवा सक्षम करा किंवा व्यक्तिचलितपणे डेटा प्रविष्ट करा.",
             noLabsFound: "जवळपास कोणतीही सरकारी प्रयोगशाळा आढळली नाही. कृपया ऑनलाइन शोधण्याचा प्रयत्न करा किंवा व्यक्तिचलितपणे डेटा प्रविष्ट करा.",
-            enterManuallyButton: "त्याऐवजी व्यक्तिचलितपणे डेटा प्रविष्ट करा"
+            enterManuallyButton: "त्याऐवजी व्यक्तिचलितपणे डेटा प्रविष्ट करा",
+            getDirections: "दिशा मिळवा",
+            kmAway: "किमी दूर"
         }
     },
     pa: {
@@ -481,7 +491,9 @@ const diagnosisLanguages: Record<string, any> = {
             findingLabs: "ਤੁਹਾਡੇ ਸਥਾਨ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਨੇੜਲੀਆਂ ਪ੍ਰਯੋਗਸ਼ਾਲਾਵਾਂ ਲੱਭ ਰਿਹਾ ਹੈ...",
             locationError: "ਤੁਹਾਡਾ ਸਥਾਨ ਐਕਸੈਸ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀਆਂ ਬ੍ਰਾਊਜ਼ਰ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਸਥਾਨ ਸੇਵਾਵਾਂ ਨੂੰ ਸਮਰੱਥ ਕਰੋ ਜਾਂ ਹੱਥੀਂ ਡਾਟਾ ਦਾਖਲ ਕਰੋ।",
             noLabsFound: "ਨੇੜੇ ਕੋਈ ਸਰਕਾਰੀ ਪ੍ਰਯੋਗਸ਼ਾਲਾ ਨਹੀਂ ਮਿਲੀ। ਕਿਰਪਾ ਕਰਕੇ ਔਨਲਾਈਨ ਖੋਜਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ ਜਾਂ ਹੱਥੀਂ ਡਾਟਾ ਦਾਖਲ ਕਰੋ।",
-            enterManuallyButton: "ਇਸਦੀ ਬਜਾਏ ਹੱਥੀਂ ਡਾਟਾ ਦਾਖਲ ਕਰੋ"
+            enterManuallyButton: "ਇਸਦੀ ਬਜਾਏ ਹੱਥੀਂ ਡਾਟਾ ਦਾਖਲ ਕਰੋ",
+            getDirections: "ਨਿਰਦੇਸ਼ ਪ੍ਰਾਪਤ ਕਰੋ",
+            kmAway: "ਕਿਮੀ ਦੂਰ"
         }
     },
     kn: {
@@ -493,7 +505,7 @@ const diagnosisLanguages: Record<string, any> = {
         analyzing: "ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
         results: "ರೋಗನಿರ್ಣಯದ ಫಲಿತಾಂಶಗಳು",
         confidence: "ವಿಶ್ವಾಸದ ಮಟ್ಟ",
-        recommendations: "ಶಿಫಾರಸುಗಳು",
+        recommendations: "ಶಿಫਾਰಸುಗಳು",
         soilHealth: "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ವಿಶ್ಲೇಷಣೆ",
         soilHealthCard: "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್",
         hasCard: "ನನ್ನ ಬಳಿ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಇದೆ",
@@ -573,7 +585,9 @@ const diagnosisLanguages: Record<string, any> = {
             findingLabs: "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಬಳಸಿಕೊಂಡು ಹತ್ತಿರದ ಪ್ರಯೋಗಾಲಯಗಳನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ...",
             locationError: "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಪ್ರವೇಶಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ। ದಯವಿಟ್ಟು ನಿಮ್ಮ ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಸ್ಥಳ ಸೇವೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
             noLabsFound: "ಹತ್ತಿರದಲ್ಲಿ ಯಾವುದೇ ಸರ್ಕಾರಿ ಪ್ರಯೋಗಾಲಯಗಳು ಕಂಡುಬಂದಿಲ್ಲ। ದಯವಿಟ್ಟು ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಹುಡುಕಲು ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.",
-            enterManuallyButton: "ಬದಲಿಗೆ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ"
+            enterManuallyButton: "ಬದಲಿಗೆ ಡೇಟಾವನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ",
+            getDirections: "ನಿರ್ದೇಶನಗಳನ್ನು ಪಡೆಯಿರಿ",
+            kmAway: "ಕಿಮೀ ದೂರ"
         }
     },
     ta: {
@@ -665,7 +679,9 @@ const diagnosisLanguages: Record<string, any> = {
             findingLabs: "உங்கள் இருப்பிடத்தைப் பயன்படுத்தி அருகிலுள்ள ஆய்வகங்களைக் கண்டறிகிறது...",
             locationError: "உங்கள் இருப்பிடத்தை அணுக முடியவில்லை. உங்கள் உலாவி அமைப்புகளில் இருப்பிடச் சேவைகளை இயக்கவும் அல்லது தரவை கைமுறையாக உள்ளிடவும்.",
             noLabsFound: "அருகில் அரசு ஆய்வகங்கள் எதுவும் இல்லை. ஆன்லைனில் தேட முயற்சிக்கவும் அல்லது தரவை கைமுறையாக உள்ளிடவும்.",
-            enterManuallyButton: "அதற்கு பதிலாக தரவை கைமுறையாக உள்ளிடவும்"
+            enterManuallyButton: "அதற்கு பதிலாக தரவை கைமுறையாக உள்ளிடவும்",
+            getDirections: "திசைகளைப் பெறுக",
+            kmAway: "கிமீ தொலைவில்"
         }
     },
 };
@@ -695,6 +711,8 @@ export default function CropDiagnosis() {
     const [nearbyLabs, setNearbyLabs] = useState<Lab[]>([]);
     const [isFindingLabs, setIsFindingLabs] = useState(false);
     const [locationError, setLocationError] = useState<string | null>(null);
+    const [userLocation, setUserLocation] = useState<{latitude: number, longitude: number} | null>(null);
+
 
     const [manualSoilData, setManualSoilData] = useState<SoilDataEntry>({
         ph: undefined, nitrogen: undefined, phosphorus: undefined, potassium: undefined,
@@ -719,19 +737,28 @@ export default function CropDiagnosis() {
         setShowLabFinder(true); // Show the lab finder UI
 
         navigator.geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
                 const { latitude, longitude } = position.coords;
-                // SIMULATE API CALL to find labs based on lat/lon
-                // In a real app, you would fetch this from a backend service or Google Maps API
-                console.log(`Searching for labs near ${latitude}, ${longitude}`);
-                setTimeout(() => {
-                    setNearbyLabs([
-                        { name: "District Soil Testing Laboratory, Krishibhavan", address: "Shivajinagar, Pune-411005" },
-                        { name: "Agricultural College Soil Lab", address: "College Of Agriculture, Pune" },
-                        { name: "KVK Narayangaon Soil Testing", address: "Narayangaon, Pune District" }
-                    ]);
+                setUserLocation({ latitude, longitude });
+                try {
+                    const response = await fetch('/api/nearby-labs', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ latitude, longitude, lang: currentLang }),
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch nearby labs.');
+                    }
+                    const labs = await response.json();
+                    setNearbyLabs(labs);
+                } catch (error) {
+                    console.error("Error fetching nearby labs:", error);
+                    setLocationError(t.labFinder.noLabsFound);
+                } finally {
                     setIsFindingLabs(false);
-                }, 2000);
+                }
             },
             (error) => {
                 console.error("Geolocation error:", error);
@@ -1140,12 +1167,25 @@ export default function CropDiagnosis() {
                                             ) : nearbyLabs.length > 0 ? (
                                                 <div className="space-y-3">
                                                     {nearbyLabs.map((lab, index) => (
-                                                        <div key={index} className="p-3 border rounded-lg flex items-start gap-3">
-                                                            <MapPin className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                                                            <div>
-                                                                <p className="font-semibold">{lab.name}</p>
-                                                                <p className="text-sm text-muted-foreground">{lab.address}</p>
+                                                         <div key={index} className="p-3 border rounded-lg flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-3">
+                                                            <div className="flex items-start gap-3">
+                                                                <MapPin className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                                                                <div>
+                                                                    <p className="font-semibold">{lab.name}</p>
+                                                                    <p className="text-sm text-muted-foreground">{lab.address}</p>
+                                                                    {lab.distance && (
+                                                                         <Badge variant="secondary" className="mt-2">
+                                                                            {lab.distance.toFixed(1)} {t.labFinder.kmAway}
+                                                                         </Badge>
+                                                                    )}
+                                                                </div>
                                                             </div>
+                                                            <Button asChild variant="outline" size="sm" className="w-full sm:w-auto mt-2 sm:mt-0">
+                                                                <a href={`https://www.google.com/maps/dir/?api=1&destination=${lab.lat},${lab.lon}&origin=${userLocation?.latitude},${userLocation?.longitude}`} target="_blank" rel="noopener noreferrer">
+                                                                    <Map className="h-4 w-4 mr-2" />
+                                                                    {t.labFinder.getDirections}
+                                                                </a>
+                                                            </Button>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -1362,3 +1402,4 @@ export default function CropDiagnosis() {
         </div>
     )
 }
+
