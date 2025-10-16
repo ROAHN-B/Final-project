@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+// Assuming these are external contexts and components
 import { useLanguage, Language } from "@/contexts/language-context";
 import { useAdvisory } from "@/contexts/AdvisoryContext";
+import { ChatHistorySidebar } from "./ChatHistorySidebar"; 
+import { cn } from "@/lib/utils";
 
 // UI Components
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ChatHistorySidebar } from "@/app/chatbot/ChatHistorySidebar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,16 +26,16 @@ import {
   Menu,
   AlertTriangle
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-// ---------- FIX FOR TYPESCRIPT ERROR ----------
+
+// ---------- FIX FOR TYPESCRIPT ERROR (Mandatory for Voice Rec.) ----------
 declare global {
   interface Window {
     SpeechRecognition: any;
     webkitSpeechRecognition: any;
   }
 }
-// ------------------------------------------
+// ----------------------------------------------------------------------
 
 // ---------- ERROR BOUNDARY ----------
 class ChatbotErrorBoundary extends React.Component<
@@ -66,12 +68,11 @@ class ChatbotErrorBoundary extends React.Component<
         </div>
       );
     }
-
     return this.props.children;
   }
 }
 
-// ---------- TYPES ----------
+// ---------- TYPES (UPDATED for videoUrl) ----------
 type Message = {
   role: "user" | "bot";
   text: string;
@@ -79,6 +80,7 @@ type Message = {
   image?: string;
   suggestions?: string[];
   timestamp?: number;
+  videoUrl?: string; // <-- NEW: Verified YouTube URL field
 };
 
 type Chat = {
@@ -91,6 +93,7 @@ type Chat = {
 type ChatHistory = {
   [id: string]: Chat;
 };
+// -------------------------------------------------
 
 // ---------- HELPER FUNCTIONS ----------
 const fileToBase64 = (file: File): Promise<string> => 
@@ -107,12 +110,10 @@ const mdToHtml = (md: string): string =>
     .replace(/^[\*\-] (.*$)/gim, "<li class='ml-4 my-1 list-disc'>$1</li>")
     .replace(/\n/g, "<br />");
 
-// ---------- SAFE TRANSLATION HELPER ----------
 const getSafeTranslation = (translations: any, path: string, fallback: any = '') => {
   try {
     const keys = path.split('.');
     let result = translations;
-    
     for (const key of keys) {
       if (result && typeof result === 'object' && key in result) {
         result = result[key];
@@ -120,7 +121,6 @@ const getSafeTranslation = (translations: any, path: string, fallback: any = '')
         return fallback;
       }
     }
-    
     return result || fallback;
   } catch (error) {
     console.warn(`Translation missing: ${path}`, error);
@@ -128,69 +128,37 @@ const getSafeTranslation = (translations: any, path: string, fallback: any = '')
   }
 };
 
-// ---------- MULTILINGUAL MESSAGE GENERATORS ----------
 const getMultilingualMessages = (lang: Language) => {
   const messages = {
     en: {
       welcome: "🌾 Welcome to Krishi-Mitra! I'm your AI agricultural assistant. How can I help you today?",
-      suggestions: [
-        "🌱 What crops are suitable for my region?",
-        "🔍 Help me identify this plant disease",
-        "📅 When should I plant rice?",
-        "💰 What are the current market prices?"
-      ]
+      suggestions: ["🌱 What crops are suitable for my region?", "🔍 Help me identify this plant disease", "📅 When should I plant rice?", "💰 What are the current market prices?"]
     },
     hi: {
       welcome: "🌾 कृषिमित्र में आपका स्वागत है! मैं आपका AI कृषि सहायक हूं। मैं आज आपकी कैसे मदद कर सकता हूं?",
-      suggestions: [
-        "🌱 मेरे क्षेत्र के लिए कौी फसलें उपयुक्त हैं?",
-        "🔍 इस पौधे की बीमारी की पहचान करने में मेरी सहायता करें",
-        "📅 मुझे चावल कब लगाना चाहिए?",
-        "💰 वर्तमान बाजार भाव क्या हैं?"
-      ]
+      suggestions: ["🌱 मेरे क्षेत्र के लिए कौी फसलें उपयुक्त हैं?", "🔍 इस पौधे की बीमारी की पहचान करने में मेरी सहायता करें", "📅 मुझे चावल कब लगाना चाहिए?", "💰 वर्तमान बाजार भाव क्या हैं?"]
     },
     mr: {
       welcome: "🌾 कृषीमित्रमध्ये आपले स्वागत आहे! मी तुमचा AI शेती सहाय्यक आहे. मी आज तुमची कशी मदत करू शकतो?",
-      suggestions: [
-        "🌱 माझ्या भागासाठी कोणते पीक उपयुक्त आहे?",
-        "🔍 या वनस्पती रोगाची ओळख पटवण्यात माझी मदत करा",
-        "📅 मला तांदूळ कधी लावावा?",
-        "💰 सध्याचे बाजार भाव काय आहेत?"
-      ]
+      suggestions: ["🌱 माझ्या भागासाठी कोणते पीक उपयुक्त आहे?", "🔍 या वनस्पती रोगाची ओळख पटवण्यात माझी मदत करा", "📅 मला तांदूळ कधी लावावा?", "💰 सध्याचे बाजार भाव काय आहेत?"]
     },
     pa: {
       welcome: "🌾 ਕ੍ਰਿਸ਼ੀਮਿੱਤਰ ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ! ਮੈਂ ਤੁਹਾਡਾ AI ਖੇਤੀਬਾੜੀ ਸਹਾਇਕ ਹਾਂ। ਮੈਂ ਅੱਜ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?",
-      suggestions: [
-        "🌱 ਮੇਰੇ ਖੇਤਰ ਲਈ ਕਿਹੜੀਆਂ ਫਸਲਾਂ ਢੁੱਕਵੀਆਂ ਹਨ?",
-        "🔍 ਮੈਨੂੰ ਇਸ ਪੌਦੇ ਦੀ ਬਿਮਾਰੀ ਦੀ ਪਛਾਣ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰੋ",
-        "📅 ਮੈਨੂੰ ਚਾਵਲ ਕਦੋਂ ਲਗਾਉਣੇ ਚਾਹੀਦੇ ਹਨ?",
-        "💰 ਮੌਜੂਦਾ ਬਾਜ਼ਾਰ ਭਾਅ ਕੀ ਹਨ?"
-      ]
+      suggestions: ["🌱 ਮੇਰੇ ਖੇਤਰ ਲਈ ਕਿਹੜੀਆਂ ਫਸਲਾਂ ਢੁੱਕਵੀਆਂ ਹਨ?", "🔍 ਮੈਨੂੰ ਇਸ ਪੌਦੇ ਦੀ ਬਿਮਾਰੀ ਦੀ ਪਛਾਣ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰੋ", "📅 ਮੈਨੂੰ ਚਾਵਲ ਕਦੋਂ ਲਗਾਉਣੇ ਚਾਹੀਦੇ ਹਨ?", "💰 ਮੌਜੂਦਾ ਬਾਜ਼ਾਰ ਭਾਅ ਕੀ ਹਨ?"]
     },
     kn: {
       welcome: "🌾 ಕೃಷಿಮಿತ್ರಕ್ಕೆ ಸುಸ್ವಾಗತ! ನಾನು ನಿಮ್ಮ AI ಕೃಷಿ ಸಹಾಯಕನಾಗಿದ್ದೇನೆ. ನಾನು ಇಂದು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?",
-      suggestions: [
-        "🌱 ನನ್ನ ಪ್ರದೇಶಕ್ಕೆ ಯಾವ ಬೆಳೆಗಳು ಯೋಗ್ಯವಾಗಿವೆ?",
-        "🔍 ಈ ಸಸ್ಯದ ರೋಗವನ್ನು ಗುರುತಿಸಲು ನನಗೆ ಸಹಾಯ ಮಾಡಿ",
-        "📅 ನಾನು ಅಕ್ಕಿಯನ್ನು ಯಾವಾಗ ನಾಟು ಮಾಡಬೇಕು?",
-        "💰 ಪ್ರಸ್ತುತ ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು ಏನು?"
-      ]
+      suggestions: ["🌱 ನನ್ನ ಪ್ರದೇಶಕ್ಕೆ ಯಾವ ಬೆಳೆಗಳು ಯೋಗ್ಯವಾಗಿವೆ?", "🔍 ಈ ಸಸ್ಯದ ರೋಗವನ್ನು ಗುರುತಿಸಲು ನನಗೆ ಸಹಾಯ ಮಾಡಿ", "📅 ನಾನು ಅಕ್ಕಿಯನ್ನು ಯಾವಾಗ ನಾಟು ಮಾಡಬೇಕು?", "💰 ಪ್ರಸ್ತುತ ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು ಏನು?"]
     },
     ta: {
       welcome: "🌾 கிருஷிமித்ராவுக்கு வரவேற்கிறேன்! நான் உங்கள் AI விவசாய உதவியாளர். இன்று நான் உங்களுக்கு எவ்வாறு உதவ முடியும்?",
-      suggestions: [
-        "🌱 என் பகுதிக்கு எந்த பயிர்கள் ஏற்றவை?",
-        "🔍 இந்த தாவர நோயை அடையாளம் காண எனக்கு உதவுங்கள்",
-        "📅 எனக்கு அரிசி எப்போது நட வேண்டும்?",
-        "💰 தற்போதைய சந்தை விலைகள் என்ன?"
-      ]
+      suggestions: ["🌱 என் பகுதிக்கு எந்த பயிர்கள் ஏற்றவை?", "🔍 இந்த தாவர நோயை அடையாளம் காண எனக்கு உதவுங்கள்", "📅 எனக்கு அரிசி எப்போது நட வேண்டும்?", "💰 தற்போதைய சந்தை விலைகள் என்ன?"]
     }
   };
-  
   return messages[lang] || messages.en;
 };
 
-// ---------- SPEAKER COMPONENT ----------
+// ---------- SPEAKER COMPONENT (Text-to-Speech) ----------
 function Speaker({ text, lang }: { text: string; lang: string }) {
   const [speaking, setSpeaking] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
@@ -200,7 +168,6 @@ function Speaker({ text, lang }: { text: string; lang: string }) {
       const supported = 'speechSynthesis' in window;
       setIsSupported(supported);
     };
-    
     checkSupport();
     return () => {
       if (speechSynthesis) {
@@ -221,7 +188,6 @@ function Speaker({ text, lang }: { text: string; lang: string }) {
     try {
       const cleanText = text.replace(/<[^>]*>/g, "");
       const utterance = new SpeechSynthesisUtterance(cleanText);
-      
       const voices = speechSynthesis.getVoices();
       const voice = voices.find((v) => v.lang.startsWith(lang)) || 
                       voices.find((v) => v.lang.startsWith(lang.split("-")[0]));
@@ -341,6 +307,51 @@ function useVoiceRecognition(lang: Language, onTranscript: (transcript: string) 
   return { isListening, error, startListening, stopListening };
 }
 
+// ---------- NEW: YouTube Player Component ----------
+function YouTubePlayer({ videoUrl }: { videoUrl: string }) {
+  let videoId = '';
+  try {
+    const url = new URL(videoUrl);
+    if (url.hostname.includes('youtu.be')) {
+      videoId = url.pathname.substring(1);
+    } else if (url.searchParams.get('v')) {
+      videoId = url.searchParams.get('v') as string;
+    }
+  } catch (e) {
+    // Basic fallback for malformed URLs
+    videoId = videoUrl.split('/').pop() || '';
+    if (videoId.includes('watch?v=')) videoId = videoId.split('watch?v=')[1];
+  }
+
+  if (!videoId) return null;
+
+  // Use a secure embed URL
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?controls=0&modestbranding=1&rel=0`;
+
+  return (
+    <div className="mt-3 p-3 bg-secondary/50 border border-secondary rounded-xl max-w-sm flex flex-col gap-3 shadow-md">
+      <h4 className="text-sm font-semibold text-primary">🎥 Visual Guide:</h4>
+      <iframe
+        className="w-full h-40 rounded-lg"
+        src={embedUrl}
+        title="Krishi-Mitra Video Suggestion"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+      <a 
+        href={videoUrl} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-xs text-primary font-medium hover:underline text-center truncate"
+      >
+        Watch Full Video on YouTube
+      </a>
+    </div>
+  );
+}
+// ----------------------------------------------------
+
 // ---------- MAIN COMPONENT ----------
 function ChatbotContent() {
   const { translations: t, currentLang, setCurrentLang } = useLanguage();
@@ -361,7 +372,6 @@ function ChatbotContent() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // API Key from environment
   const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY_CHATBOT;
 
   // Voice recognition hook
@@ -372,15 +382,11 @@ function ChatbotContent() {
     }
   );
 
-  // ----- MOUNTING SAFETY -----
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  useEffect(() => { setIsMounted(true); }, []);
 
-  // ----- CHAT MANAGEMENT -----
+  // ----- CHAT MANAGEMENT: New Chat -----
   const handleNewChat = useCallback(() => {
     const multilingualMessages = getMultilingualMessages(currentLang);
-    
     const newChatId = Date.now().toString();
     const initialMessage: Message = {
       role: 'bot',
@@ -403,7 +409,21 @@ function ChatbotContent() {
     setIsSheetOpen(false);
   }, [currentLang, t]);
 
-  // ----- MULTILINGUAL INITIALIZATION & DATA LOADING -----
+  // ----- CHAT MANAGEMENT: Delete Chat -----
+  const handleDeleteChat = useCallback((idToDelete: string) => {
+    setChatHistory(prev => {
+      const newHistory = { ...prev };
+      delete newHistory[idToDelete];
+      return newHistory;
+    });
+
+    if (activeChatId === idToDelete) {
+      handleNewChat(); 
+    }
+  }, [activeChatId, handleNewChat]);
+
+
+  // ----- LOCAL STORAGE MANAGEMENT (Initialization and Saving) -----
   useEffect(() => {
     if (!isMounted) return;
     
@@ -437,7 +457,6 @@ function ChatbotContent() {
     }
   }, [isMounted, currentLang, handleNewChat]);
 
-  // ----- DATA SAVING -----
   useEffect(() => {
     if (!isMounted || Object.keys(chatHistory).length === 0) return;
     
@@ -450,13 +469,8 @@ function ChatbotContent() {
       console.error('Error saving chat history:', error);
     }
   }, [chatHistory, activeChatId, isMounted]);
-
-  // ----- SCROLL TO BOTTOM -----
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
   
-    // ----- UPDATE CHAT HISTORY -----
+  // Update current chat messages when local state changes
   useEffect(() => {
     if (activeChatId && messages.length > 0) {
       setChatHistory(prev => ({
@@ -471,7 +485,7 @@ function ChatbotContent() {
   }, [messages, activeChatId]);
 
 
-  // ----- CORE API CALL -----
+  // ----- CORE API CALL (UPDATED with VIDEO_SEARCH_QUERY logic) -----
   const sendMessageToGemini = useCallback(async (message: string, image: File | null = null) => {
     if (!GEMINI_API_KEY || !activeChatId) return;
     setIsLoading(true);
@@ -486,7 +500,7 @@ function ChatbotContent() {
       const reportDate = new Date(latestSoilReport.timestamp).toLocaleDateString();
       const reportEntries = Object.entries(latestSoilReport)
         .filter(([key, value]) => key !== 'timestamp' && value !== undefined && value !== null && !isNaN(Number(value)))
-        .map(([key, value]) => `  - ${key.toUpperCase()}: ${value}`)
+        .map(([key, value]) => `  - ${key.toUpperCase()}: ${value}`)
         .join("\n");
 
       soilDataContext = `
@@ -499,10 +513,17 @@ ${reportEntries}
 `;
     }
 
+    // --- MODIFIED SYSTEM PROMPT to request a SEARCH QUERY ---
     const STRICT_SYSTEM_PROMPT = `You are Krishi-Mitra, an expert Indian agricultural assistant. You have access to the user's soil health data provided below if available.
 ${soilDataContext}
 You MUST reply in ${languageName}, using simple words. Provide short, practical, and low-cost advice.
-${titleInstruction}`;
+${titleInstruction}
+
+**VIDEO SUGGESTION INSTRUCTION:**
+If the user's question involves a practical step, technique, or visual identification (e.g., 'How to apply fertilizer,' 'Identify this disease,' 'How to use this tool'), you MUST suggest a search query for a YouTube video.
+If you suggest a video, add the search term on a new line at the very end of your response, prefixed with exactly: \`VIDEO_SEARCH_QUERY: [Your short, relevant search term in the response language]\`.
+Do NOT generate a search query for abstract or simple factual questions.`;
+    // ---------------------------------------------------
     
     let userParts: any[] = [{ text: `${message || "Please analyze the image."}` }];
     if (image) {
@@ -518,7 +539,7 @@ ${titleInstruction}`;
     }
     
     try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, { 
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, { 
             method: "POST", 
             headers: { "Content-Type": "application/json" }, 
             body: JSON.stringify({ 
@@ -535,15 +556,54 @@ ${titleInstruction}`;
         
         const data = await res.json();
         let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "⚠️ No response";
+        
+        // 1. Extract and clean up Title
         const titleMatch = raw.match(/Title: (.*)/);
-
         if (titleMatch?.[1] && activeChatId) {
             const newTitle = titleMatch[1].trim();
             setChatHistory(prev => ({ ...prev, [activeChatId]: { ...prev[activeChatId], title: newTitle } }));
             raw = raw.replace(/Title: .*/, "").trim();
         }
         
-        setMessages(p => [...p, { role: "bot", text: raw, html: mdToHtml(raw), suggestions: [] }]);
+        // 2. Extract the SEARCH QUERY
+        let videoQuery: string | undefined;
+        let finalVideoUrl: string | undefined;
+        const queryMatch = raw.match(/VIDEO_SEARCH_QUERY: (.*)/);
+
+        if (queryMatch) {
+            videoQuery = queryMatch[1].trim();
+            // Remove the query line from the main text response
+            raw = raw.replace(/VIDEO_SEARCH_QUERY: .*/, "").trim();
+
+            // --- CHAINED SEARCH CALL (Requires /api/youtube-search endpoint) ---
+            try {
+                const searchRes = await fetch('/api/youtube-search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: videoQuery }),
+                });
+
+                const searchData = await searchRes.json();
+                
+                if (searchData.success && searchData.videoUrl) {
+                    finalVideoUrl = searchData.videoUrl;
+                } else {
+                    console.warn("YouTube search tool returned no video or failed.");
+                }
+            } catch (searchError) {
+                console.error("Error calling YouTube search endpoint:", searchError);
+            }
+            // -------------------------------------------------------------------
+        }
+
+        // 3. Update messages
+        setMessages(p => [...p, { 
+            role: "bot", 
+            text: raw, 
+            html: mdToHtml(raw), 
+            suggestions: [], 
+            videoUrl: finalVideoUrl // Pass the verified URL
+        }]);
     } catch (err: any) {
         setMessages(p => [...p, { role: "bot", text: `⚠️ Error: ${err.message}`, html: `⚠️ Error: ${err.message}` }]);
     } finally {
@@ -564,7 +624,7 @@ ${titleInstruction}`;
     }
   }, [activeChatId, chatHistory]);
 
-  // ----- FILE HANDLING -----
+  // ----- FILE HANDLING (remains unchanged) -----
   const handleRemoveImage = useCallback(() => {
     setImageFile(null);
     setImagePreview(null);
@@ -580,19 +640,17 @@ ${titleInstruction}`;
         setSpeechError('Please select a valid image file.');
         return;
       }
-      
       if (file.size > 10 * 1024 * 1024) { // 10MB limit
         setSpeechError('Image size must be less than 10MB.');
         return;
       }
-      
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
       setSpeechError(null);
     }
   }, []);
 
-  // ----- VOICE RECOGNITION -----
+  // ----- VOICE RECOGNITION (remains unchanged) -----
   const handleMicClick = useCallback(() => {
     if (isListening) {
       stopListening();
@@ -608,7 +666,7 @@ ${titleInstruction}`;
     }
   }, [voiceError]);
 
-  // ----- SEND MESSAGE -----
+  // ----- SEND MESSAGE (remains unchanged) -----
   const handleSend = useCallback(() => {
     if (!t || (input.trim() === "" && !imageFile)) return;
     
@@ -625,8 +683,16 @@ ${titleInstruction}`;
     handleRemoveImage();
   }, [input, imageFile, imagePreview, handleRemoveImage, sendMessageToGemini, t]);
 
+
+  // ----- SCROLL TO BOTTOM -----
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
+
+
   // ----- UI RENDER -----
   if (!isMounted) {
+    // ... (Loading state) ...
     return (
       <div className="fixed inset-0 z-50 flex bg-background text-foreground items-center justify-center">
         <div className="text-center">
@@ -637,11 +703,11 @@ ${titleInstruction}`;
     );
   }
 
+  const placeholderText = getSafeTranslation(t, 'chatbotUI.placeholder', 'Ask a farming question...');
   const currentChatTitle = activeChatId && chatHistory[activeChatId] 
     ? chatHistory[activeChatId].title 
     : "Chat Bot";
 
-  const placeholderText = getSafeTranslation(t, 'chatbotUI.placeholder', 'Ask a farming question...');
 
   return (
     <div className="fixed inset-0 z-50 flex bg-background text-foreground">
@@ -652,6 +718,7 @@ ${titleInstruction}`;
           activeChatId={activeChatId} 
           onNewChat={handleNewChat} 
           onSelectChat={handleSelectChat} 
+          onDeleteChat={handleDeleteChat}
         /> 
       </div>
 
@@ -671,6 +738,7 @@ ${titleInstruction}`;
                   activeChatId={activeChatId} 
                   onNewChat={handleNewChat} 
                   onSelectChat={handleSelectChat} 
+                  onDeleteChat={handleDeleteChat}
                 />
               </SheetContent>
             </Sheet>
@@ -737,6 +805,13 @@ ${titleInstruction}`;
                       <div className="flex items-center gap-1 mt-1">
                         <Speaker text={message.text} lang={currentLang} />
                       </div>
+                      
+                      {/* --- YOUTUBE PLAYER INTEGRATION --- */}
+                      {message.videoUrl && (
+                        <YouTubePlayer videoUrl={message.videoUrl} />
+                      )}
+                      {/* --------------------------------- */}
+
                       {message.suggestions?.length ? (
                         <SuggestionButtons 
                           suggestions={message.suggestions} 
