@@ -1,3 +1,5 @@
+// roahn-b/final-project/Final-project-a5e93e8799a960255807c3b49b0b20115b05559e/contexts/language-context.tsx
+
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
@@ -38,20 +40,43 @@ export interface GlobalTranslations {
   description: string
   getStarted: string
   exploreFeatures: string
-  logout?: string
-  login?: string
-  signup?: string
   continue: string
-  register: string
-  alreadyHaveAccount: string
-  dontHaveAccount: string
-  loginSuccess: string
-  signupSuccess: string
-  userNotFound: string
-  mobileExists: string
+  update: string
   selectLanguage: string
-  fillAllFields?: string
-  invalidMobile?: string
+  logout?: string
+  
+  // Login & Signup Page
+  loginPage: {
+    login: string
+    signup: string
+    register: string
+    loginDescription: string
+    mobileNumber: string
+    firstName: string
+    lastName: string
+    selectState: string
+    selectDistrict: string
+    selectTaluka: string
+    selectVillage: string
+    alreadyHaveAccount: string
+    dontHaveAccount: string
+    fillAllFields: string
+    invalidMobile: string
+    invalidOtp: string
+    sendOtp: string
+    sendingOtp: string
+    verifyOtp: string
+    verifying: string
+    registering: string
+    changeMobile: string
+    otpSentTo: (mobileNumber: string) => string
+    loginSuccess: string
+    signupSuccess: string
+    userNotFound: string
+    mobileExists: string
+    toastOtpSentTitle: string
+    toastOtpSentDesc: string
+  }
 
   // Menu and Navigation
   menu: {
@@ -167,17 +192,6 @@ export interface GlobalTranslations {
     insuranceDesc: string
   }
 
-  // Login Page
-  loginDescription?: string
-  mobileNumber?: string
-  firstName?: string
-  lastName?: string
-  selectState?: string
-  selectDistrict?: string
-  selectTaluka?: string
-  selectVillage?: string
-  update?: string
-
   // Dashboard Page
   dashboard: {
     title: string
@@ -200,7 +214,7 @@ export interface GlobalTranslations {
       governmentSchemes: string
       governmentSchemesDesc: string
     }
-    advisories: Advisory[]
+    advisories: Advisory[] // This will now hold only default/fallback advisories
     weather: WeatherInfo
     prices: PriceInfo[]
     voiceListening: string
@@ -222,6 +236,10 @@ export interface GlobalTranslations {
     title: string
     markAllAsRead: string
     noNotifications: string
+    samples: {
+        highWinds: { title: string; description: string };
+        cottonPrices: { title: string; description: string };
+    };
   }
 
   // Support Section
@@ -254,19 +272,40 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     getStarted: "Get Started",
     exploreFeatures: "Explore Features",
     logout: "Logout",
-    login: "Login",
-    signup: "Sign Up",
     continue: "Continue",
-    register: "Register",
-    alreadyHaveAccount: "Already have an account?",
-    dontHaveAccount: "Don't have an account?",
-    loginSuccess: "Login successful! Redirecting...",
-    signupSuccess: "Registration successful! Redirecting...",
-    userNotFound: "User not found. Please sign up.",
-    mobileExists: "Mobile number already registered. Please log in.",
+    update: "UPDATE",
     selectLanguage: "Select Language",
-    fillAllFields: "Please fill all fields",
-    invalidMobile: "Please enter a valid 10-digit mobile number",
+    loginPage: {
+      login: "Login",
+      signup: "Sign Up",
+      register: "Register",
+      loginDescription: "Please provide your details to get started.",
+      mobileNumber: "Mobile Number",
+      firstName: "First Name",
+      lastName: "Last Name",
+      selectState: "Select State",
+      selectDistrict: "Select District",
+      selectTaluka: "Select Taluka",
+      selectVillage: "Select Village",
+      alreadyHaveAccount: "Already have an account?",
+      dontHaveAccount: "Don't have an account?",
+      fillAllFields: "Please fill all fields",
+      invalidMobile: "Please enter a valid 10-digit mobile number",
+      invalidOtp: "Please enter a valid 6-digit OTP.",
+      sendOtp: "Send OTP",
+      sendingOtp: "Sending OTP...",
+      verifyOtp: "Verify OTP & Login",
+      verifying: "Verifying...",
+      registering: "Registering...",
+      changeMobile: "Change Mobile Number",
+      otpSentTo: (mobileNumber) => `Enter OTP sent to +91 ${mobileNumber}`,
+      loginSuccess: "Login successful! Redirecting...",
+      signupSuccess: "Registration successful! Redirecting...",
+      userNotFound: "User not found. Please sign up.",
+      mobileExists: "Mobile number already registered. Please log in.",
+      toastOtpSentTitle: "OTP Sent",
+      toastOtpSentDesc: "An OTP has been sent to your mobile number.",
+    },
     menu: {
       home: "Home",
       profile: "My Profile",
@@ -371,15 +410,6 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       insurance: "Crop Insurance",
       insuranceDesc: "Protect your crops with insurance",
     },
-    loginDescription: "Please provide your details to get started.",
-    mobileNumber: "Mobile Number",
-    firstName: "First Name",
-    lastName: "Last Name",
-    selectState: "Select State",
-    selectDistrict: "Select District",
-    selectTaluka: "Select Taluka",
-    selectVillage: "Select Village",
-    update: "UPDATE",
     dashboard: {
       title: "KrishiMitra Dashboard",
       welcome: "Welcome back",
@@ -402,8 +432,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         governmentSchemesDesc: "Explore new schemes and subsidies for farmers.",
       },
       advisories: [
-        { title: "Cotton Bollworm Alert", description: "Monitor your cotton crops for early signs", time: "2 hours ago", priority: "high" },
-        { title: "Fertilizer Application", description: "Best time for nitrogen application", time: "1 day ago", priority: "medium" },
+        { title: "Welcome!", description: "No new advisories. Try diagnosing a crop to get started.", time: "Just now", priority: "low" },
       ],
       weather: { 
         temp: "28°C", 
@@ -436,6 +465,10 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       title: "Notifications",
       markAllAsRead: "Mark all as read",
       noNotifications: "No new notifications",
+      samples: {
+        highWinds: { title: "High Winds Alert", description: "Strong winds expected tomorrow morning. Secure young plants." },
+        cottonPrices: { title: "Cotton Prices Up", description: "Cotton prices have increased by 3% in the Mumbai market." },
+      },
     },
     supportSection: {
       title: "24/7 Farmer Support",
@@ -455,19 +488,40 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     getStarted: "शुरू करें",
     exploreFeatures: "विशेषताएं खोजें",
     logout: "लॉग आउट",
-    login: "लॉग इन करें",
-    signup: "साइन अप करें",
     continue: "जारी रखें",
-    register: "रजिस्टर करें",
-    alreadyHaveAccount: "पहले से ही एक खाता है?",
-    dontHaveAccount: "खाता नहीं है?",
-    loginSuccess: "लॉगिन सफल! रीडायरेक्ट कर रहा है...",
-    signupSuccess: "पंजीकरण सफल! रीडायरेक्ट कर रहा है...",
-    userNotFound: "उपयोगकर्ता नहीं मिला। कृपया साइन अप करें।",
-    mobileExists: "मोबाइल नंबर पहले से पंजीकृत है। कृपया लॉग इन करें।",
+    update: "अपडेट करें",
     selectLanguage: "भाषा चुनें",
-    fillAllFields: "कृपया सभी फ़ील्ड भरें",
-    invalidMobile: "कृपया एक वैध 10-अंकीय मोबाइल नंबर दर्ज करें",
+    loginPage: {
+      login: "लॉग इन करें",
+      signup: "साइन अप करें",
+      register: "रजिस्टर करें",
+      loginDescription: "शुरू करने के लिए कृपया अपना विवरण प्रदान करें।",
+      mobileNumber: "मोबाइल नंबर",
+      firstName: "पहला नाम",
+      lastName: "अंतिम नाम",
+      selectState: "राज्य चुनें",
+      selectDistrict: "जिला चुनें",
+      selectTaluka: "तालुका चुनें",
+      selectVillage: "गांव चुनें",
+      alreadyHaveAccount: "पहले से ही एक खाता है?",
+      dontHaveAccount: "खाता नहीं है?",
+      fillAllFields: "कृपया सभी फ़ील्ड भरें",
+      invalidMobile: "कृपया एक वैध 10-अंकीय मोबाइल नंबर दर्ज करें",
+      invalidOtp: "कृपया एक मान्य 6-अंकीय ओटीपी दर्ज करें।",
+      sendOtp: "ओटीपी भेजें",
+      sendingOtp: "ओटीपी भेजा जा रहा है...",
+      verifyOtp: "ओटीपी सत्यापित करें और लॉग इन करें",
+      verifying: "सत्यापित हो रहा है...",
+      registering: "पंजीकरण हो रहा है...",
+      changeMobile: "मोबाइल नंबर बदलें",
+      otpSentTo: (mobileNumber) => `+91 ${mobileNumber} पर भेजा गया ओटीपी दर्ज करें`,
+      loginSuccess: "लॉगिन सफल! रीडायरेक्ट कर रहा है...",
+      signupSuccess: "पंजीकरण सफल! रीडायरेक्ट कर रहा है...",
+      userNotFound: "उपयोगकर्ता नहीं मिला। कृपया साइन अप करें।",
+      mobileExists: "मोबाइल नंबर पहले से पंजीकृत है। कृपया लॉग इन करें।",
+      toastOtpSentTitle: "ओटीपी भेजा गया",
+      toastOtpSentDesc: "आपके मोबाइल नंबर पर एक ओटीपी भेजा गया है।",
+    },
     menu: {
       home: "होम",
       profile: "मेरी प्रोफाइल",
@@ -572,15 +626,6 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       insurance: "फसल बीमा",
       insuranceDesc: "बीमा के साथ अपनी फसलों की सुरक्षा करें",
     },
-    loginDescription: "शुरू करने के लिए कृपया अपना विवरण प्रदान करें।",
-    mobileNumber: "मोबाइल नंबर",
-    firstName: "पहला नाम",
-    lastName: "अंतिम नाम",
-    selectState: "राज्य चुनें",
-    selectDistrict: "जिला चुनें",
-    selectTaluka: "तालुका चुनें",
-    selectVillage: "गांव चुनें",
-    update: "अपडेट करें",
     dashboard: {
       title: "कृषिमित्र डैशबोर्ड",
       welcome: "वापसी पर स्वागत है",
@@ -603,8 +648,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         governmentSchemesDesc: "किसानों के लिए नई योजनाओं और सब्सिडी का पता लगाएं।",
       },
       advisories: [
-        { title: "कपास की सुंडी का अलर्ट", description: "शुरुआती लक्षणों के लिए अपनी कपास की फसलों की निगरानी करें", time: "2 घंटे पहले", priority: "high" },
-        { title: "उर्वरक का प्रयोग", description: "नाइट्रोजन प्रयोग के लिए सबसे अच्छा समय", time: "1 दिन पहले", priority: "medium" },
+        { title: "स्वागत है!", description: "कोई नई सलाह नहीं। शुरू करने के लिए किसी फसल का निदान करने का प्रयास करें।", time: "अभी", priority: "low" },
       ],
       weather: { 
         temp: "28°C", 
@@ -637,6 +681,10 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       title: "सूचनाएं",
       markAllAsRead: "सभी को पढ़ा हुआ चिह्नित करें",
       noNotifications: "कोई नई सूचनाएं नहीं हैं",
+      samples: {
+        highWinds: { title: "तेज हवाओं का अलर्ट", description: "कल सुबह तेज हवाएं चलने की उम्मीद है। छोटे पौधों को सुरक्षित करें।" },
+        cottonPrices: { title: "कपास की कीमतें बढ़ीं", description: "मुंबई बाजार में कपास की कीमतों में 3% की वृद्धि हुई है।" },
+      },
     },
     supportSection: {
       title: "24/7 किसान सहायता",
@@ -655,19 +703,40 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     getStarted: "सुरुवात करा",
     exploreFeatures: "वैशिष्ट्ये एक्सप्लोर करा",
     logout: "लॉग आउट",
-    login: "लॉग इन करा",
-    signup: "नोंदणी करा",
     continue: "सुरू ठेवा",
-    register: "नोंदणी करा",
-    alreadyHaveAccount: "आधीच खाते आहे?",
-    dontHaveAccount: "खाते नाही?",
-    loginSuccess: "लॉगिन यशस्वी! पुनर्निर्देशित करत आहे...",
-    signupSuccess: "नोंदणी यशस्वी! पुनर्निर्देशित करत आहे...",
-    userNotFound: "वापरकर्ता सापडला नाही. कृपया नोंदणी करा.",
-    mobileExists: "मोबाइल नंबर आधीच नोंदणीकृत आहे. कृपया लॉग इन करा.",
+    update: "अपडेट करा",
     selectLanguage: "भाषा निवडा",
-    fillAllFields: "कृपया सर्व फील्ड भरा",
-    invalidMobile: "कृपया वैध 10-अंकी मोबाइल नंबर प्रविष्ट करा",
+    loginPage: {
+        login: "लॉग इन करा",
+        signup: "नोंदणी करा",
+        register: "नोंदणी करा",
+        loginDescription: "सुरुवात करण्यासाठी कृपया आपले तपशील प्रदान करा.",
+        mobileNumber: "मोबाइल नंबर",
+        firstName: "पहिले नाव",
+        lastName: "आडनाव",
+        selectState: "राज्य निवडा",
+        selectDistrict: "जिल्हा निवडा",
+        selectTaluka: "तालुका निवडा",
+        selectVillage: "गाव निवडा",
+        alreadyHaveAccount: "आधीच खाते आहे?",
+        dontHaveAccount: "खाते नाही?",
+        fillAllFields: "कृपया सर्व फील्ड भरा",
+        invalidMobile: "कृपया वैध 10-अंकी मोबाइल नंबर प्रविष्ट करा",
+        invalidOtp: "कृपया वैध 6-अंकी ओटीपी प्रविष्ट करा.",
+        sendOtp: "ओटीपी पाठवा",
+        sendingOtp: "ओटीपी पाठवत आहे...",
+        verifyOtp: "ओटीपी सत्यापित करा आणि लॉग इन करा",
+        verifying: "सत्यापित करत आहे...",
+        registering: "नोंदणी करत आहे...",
+        changeMobile: "मोबाइल नंबर बदला",
+        otpSentTo: (mobileNumber) => `+91 ${mobileNumber} वर पाठवलेला ओटीपी प्रविष्ट करा`,
+        loginSuccess: "लॉगिन यशस्वी! पुनर्निर्देशित करत आहे...",
+        signupSuccess: "नोंदणी यशस्वी! पुनर्निर्देशित करत आहे...",
+        userNotFound: "वापरकर्ता सापडला नाही. कृपया नोंदणी करा.",
+        mobileExists: "मोबाइल नंबर आधीच नोंदणीकृत आहे. कृपया लॉग इन करा.",
+        toastOtpSentTitle: "ओटीपी पाठवला",
+        toastOtpSentDesc: "तुमच्या मोबाइल नंबरवर एक ओटीपी पाठवला आहे.",
+    },
     menu: {
       home: "होम",
       profile: "माझी प्रोफाइल",
@@ -772,15 +841,6 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       insurance: "पीक विमा",
       insuranceDesc: "विम्यासह आपल्या पिकांचे संरक्षण करा",
     },
-    loginDescription: "सुरुवात करण्यासाठी कृपया आपले तपशील प्रदान करा.",
-    mobileNumber: "मोबाइल नंबर",
-    firstName: "पहिले नाव",
-    lastName: "आडनाव",
-    selectState: "राज्य निवडा",
-    selectDistrict: "जिल्हा निवडा",
-    selectTaluka: "तालुका निवडा",
-    selectVillage: "गाव निवडा",
-    update: "अपडेट करा",
     dashboard: {
       title: "कृषीमित्र डॅशबोर्ड",
       welcome: "परत स्वागत आहे",
@@ -803,8 +863,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         governmentSchemesDesc: "शेतकऱ्यांसाठी नवीन योजना आणि अनुदानांचा शोध घ्या.",
       },
       advisories: [
-        { title: "कापसावरील बोंडअळीचा इशारा", description: "प्राथमिक लक्षणांसाठी तुमच्या कापूस पिकावर लक्ष ठेवा", time: "२ तासांपूर्वी", priority: "high" },
-        { title: "खत व्यवस्थापन", description: "नत्रयुक्त खते देण्यासाठी सर्वोत्तम वेळ", time: "१ दिवसापूर्वी", priority: "medium" },
+        { title: "स्वागत आहे!", description: "नवीन सल्ला नाही. प्रारंभ करण्यासाठी पीक निदान करण्याचा प्रयत्न करा.", time: "आत्ताच", priority: "low" },
       ],
       weather: { 
         temp: "28°C", 
@@ -837,6 +896,10 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       title: "सूचना",
       markAllAsRead: "सर्व वाचले म्हणून चिन्हांकित करा",
       noNotifications: "नवीन सूचना नाहीत",
+      samples: {
+        highWinds: { title: "जोरदार वाऱ्याचा इशारा", description: "उद्या सकाळी जोरदार वारे अपेक्षित आहेत. लहान रोपे सुरक्षित करा." },
+        cottonPrices: { title: "कापसाचे भाव वाढले", description: "मुंबई बाजारात कापसाच्या भावात ३% वाढ झाली आहे." },
+      },
     },
     supportSection: {
       title: "24/7 शेतकरी सहाय्य",
@@ -855,19 +918,40 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     getStarted: "ਸ਼ੁਰੂ ਕਰੋ",
     exploreFeatures: "ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਦੀ ਪੜਚੋਲ ਕਰੋ",
     logout: "ਲੌਗ ਆਉਟ",
-    login: "ਲੌਗ ਇਨ ਕਰੋ",
-    signup: "ਸਾਈਨ ਅੱਪ ਕਰੋ",
     continue: "ਜਾਰੀ ਰੱਖੋ",
-    register: "ਰਜਿਸਟਰ ਕਰੋ",
-    alreadyHaveAccount: "ਪਹਿਲਾਂ ਹੀ ਇੱਕ ਖਾਤਾ ਹੈ?",
-    dontHaveAccount: "ਖਾਤਾ ਨਹੀਂ ਹੈ?",
-    loginSuccess: "ਲੌਗਇਨ ਸਫਲ! ਰੀਡਾਇਰੈਕਟ ਕਰ ਰਿਹਾ ਹੈ...",
-    signupSuccess: "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਸਫਲ! ਰੀਡਾਇਰੈਕਟ ਕਰ ਰਿਹਾ ਹੈ...",
-    userNotFound: "ਉਪਭੋਗਤਾ ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਸਾਈਨ ਅੱਪ ਕਰੋ।",
-    mobileExists: "ਮੋਬਾਈਲ ਨੰਬਰ ਪਹਿਲਾਂ ਹੀ ਰਜਿਸਟਰਡ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਲੌਗ ਇਨ ਕਰੋ।",
+    update: "ਅੱਪਡੇਟ ਕਰੋ",
     selectLanguage: "ਭਾਸ਼ਾ ਚੁਣੋ",
-    fillAllFields: "ਕਿਰਪਾ ਕਰਕੇ ਸਾਰੇ ਖੇਤਰ ਭਰੋ",
-    invalidMobile: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ 10-ਅੰਕੀ ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+    loginPage: {
+        login: "ਲੌਗ ਇਨ ਕਰੋ",
+        signup: "ਸਾਈਨ ਅੱਪ ਕਰੋ",
+        register: "ਰਜਿਸਟਰ ਕਰੋ",
+        loginDescription: "ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਵੇਰਵੇ ਪ੍ਰਦਾਨ ਕਰੋ।",
+        mobileNumber: "ਮੋਬਾਈਲ ਨੰਬਰ",
+        firstName: "ਪਹਿਲਾ ਨਾਮ",
+        lastName: "ਆਖਰੀ ਨਾਮ",
+        selectState: "ਰਾਜ ਚੁਣੋ",
+        selectDistrict: "ਜ਼ਿਲ੍ਹਾ ਚੁਣੋ",
+        selectTaluka: "ਤਹਿਸੀਲ ਚੁਣੋ",
+        selectVillage: "ਪਿੰਡ ਚੁਣੋ",
+        alreadyHaveAccount: "ਪਹਿਲਾਂ ਹੀ ਇੱਕ ਖਾਤਾ ਹੈ?",
+        dontHaveAccount: "ਖਾਤਾ ਨਹੀਂ ਹੈ?",
+        fillAllFields: "ਕਿਰਪਾ ਕਰਕੇ ਸਾਰੇ ਖੇਤਰ ਭਰੋ",
+        invalidMobile: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ 10-ਅੰਕੀ ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+        invalidOtp: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ 6-ਅੰਕੀ OTP ਦਾਖਲ ਕਰੋ।",
+        sendOtp: "OTP ਭੇਜੋ",
+        sendingOtp: "OTP ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ...",
+        verifyOtp: "OTP ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ ਅਤੇ ਲੌਗਇਨ ਕਰੋ",
+        verifying: "ਪੁਸ਼ਟੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...",
+        registering: "ਰਜਿਸਟਰ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
+        changeMobile: "ਮੋਬਾਈਲ ਨੰਬਰ ਬਦਲੋ",
+        otpSentTo: (mobileNumber) => `+91 ${mobileNumber} 'ਤੇ ਭੇਜਿਆ ਗਿਆ OTP ਦਾਖਲ ਕਰੋ`,
+        loginSuccess: "ਲੌਗਇਨ ਸਫਲ! ਰੀਡਾਇਰੈਕਟ ਕਰ ਰਿਹਾ ਹੈ...",
+        signupSuccess: "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਸਫਲ! ਰੀਡਾਇਰੈਕਟ ਕਰ ਰਿਹਾ ਹੈ...",
+        userNotFound: "ਉਪਭੋਗਤਾ ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਸਾਈਨ ਅੱਪ ਕਰੋ।",
+        mobileExists: "ਮੋਬਾਈਲ ਨੰਬਰ ਪਹਿਲਾਂ ਹੀ ਰਜਿਸਟਰਡ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਲੌਗ ਇਨ ਕਰੋ।",
+        toastOtpSentTitle: "OTP ਭੇਜਿਆ ਗਿਆ",
+        toastOtpSentDesc: "ਤੁਹਾਡੇ ਮੋਬਾਈਲ ਨੰਬਰ 'ਤੇ ਇੱਕ OTP ਭੇਜਿਆ ਗਿਆ ਹੈ।",
+    },
     menu: {
       home: "ਹੋਮ",
       profile: "ਮੇਰੀ ਪ੍ਰੋਫਾਈਲ",
@@ -972,15 +1056,6 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       insurance: "ਫਸਲ ਬੀਮਾ",
       insuranceDesc: "ਬੀਮੇ ਨਾਲ ਆਪਣੀਆਂ ਫਸਲਾਂ ਦੀ ਸੁਰੱਖਿਆ ਕਰੋ",
     },
-    loginDescription: "ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਵੇਰਵੇ ਪ੍ਰਦਾਨ ਕਰੋ।",
-    mobileNumber: "ਮੋਬਾਈਲ ਨੰਬਰ",
-    firstName: "ਪਹਿਲਾ ਨਾਮ",
-    lastName: "ਆਖਰੀ ਨਾਮ",
-    selectState: "ਰਾਜ ਚੁਣੋ",
-    selectDistrict: "ਜ਼ਿਲ੍ਹਾ ਚੁਣੋ",
-    selectTaluka: "ਤਹਿਸੀਲ ਚੁਣੋ",
-    selectVillage: "ਪਿੰਡ ਚੁਣੋ",
-    update: "ਅੱਪਡੇਟ ਕਰੋ",
     dashboard: {
       title: "ਕ੍ਰਿਸ਼ੀਮਿੱਤਰ ਡੈਸ਼ਬੋਰਡ",
       welcome: "ਜੀ ਆਇਆਂ ਨੂੰ",
@@ -1003,8 +1078,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         governmentSchemesDesc: "ਕਿਸਾਨਾਂ ਲਈ ਨਵੀਆਂ ਸਕੀਮਾਂ ਅਤੇ ਸਬਸਿਡੀਆਂ ਦੀ ਪੜਚੋਲ ਕਰੋ।",
       },
       advisories: [
-        { title: "ਕਪਾਹ ਦੀ ਸੁੰਡੀ ਦਾ ਚੇਤਾਵਨੀ", description: "ਸ਼ੁਰੂਆਤੀ ਲੱਛਣਾਂ ਲਈ ਆਪਣੀ ਕਪਾਹ ਦੀਆਂ ਫਸਲਾਂ ਦੀ ਨਿਗਰਾਨੀ ਕਰੋ", time: "2 ਘੰਟੇ ਪਹਿਲਾਂ", priority: "high" },
-        { title: "ਖਾਦ ਦੀ ਵਰਤੋਂ", description: "ਨਾਈਟ੍ਰੋਜਨ ਦੀ ਵਰਤੋਂ ਲਈ ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ", time: "1 ਦਿਨ ਪਹਿਲਾਂ", priority: "medium" },
+        { title: "ਕੀੜੇ ਦੇ ਹਮਲੇ ਦੀ ਚਿਤਾਵਨੀ", description: "ਚਿੱਟੀ ਮੱਖੀ ਅਤੇ ਐਫੀਡਜ਼ ਲਈ ਆਪਣੀਆਂ ਫਸਲਾਂ ਦੀ ਨਿਗਰਾਨੀ ਕਰੋ।", time: "2 ਘੰਟੇ ਪਹਿਲਾਂ", priority: "high" },
       ],
       weather: { 
         temp: "28°C", 
@@ -1037,6 +1111,10 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       title: "ਸੂਚਨਾਵਾਂ",
       markAllAsRead: "ਸਭ ਨੂੰ ਪੜ੍ਹਿਆ ਹੋਇਆ ਮਾਰਕ ਕਰੋ",
       noNotifications: "ਕੋਈ ਨਵੀਂ ਸੂਚਨਾ ਨਹੀਂ ਹੈ",
+      samples: {
+        highWinds: { title: "ਤੇਜ਼ ਹਵਾਵਾਂ ਦਾ ਚੇਤਾਵਨੀ", description: "ਕੱਲ ਸਵੇਰੇ ਤੇਜ਼ ਹਵਾਵਾਂ ਦੀ ਉਮੀਦ ਹੈ। ਨੌਜਵਾਨ ਪੌਦਿਆਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਕਰੋ।" },
+        cottonPrices: { title: "ਕਪਾਹ ਦੀਆਂ ਕੀਮਤਾਂ ਵਧੀਆਂ", description: "ਮੁੰਬਈ ਬਾਜ਼ਾਰ ਵਿੱਚ ਕਪਾਹ ਦੀਆਂ ਕੀਮਤਾਂ ਵਿੱਚ 3% ਦਾ ਵਾਧਾ ਹੋਇਆ ਹੈ।" },
+      },
     },
     supportSection: {
       title: "24/7 ਕਿਸਾਨ ਸਹਾਇਤਾ",
@@ -1055,19 +1133,40 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     getStarted: "ಪ್ರಾರಂಭಿಸಿ",
     exploreFeatures: "ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿ",
     logout: "ಲಾಗ್ ಔಟ್",
-    login: "ಲಾಗ್ ಇನ್",
-    signup: "ಸೈನ್ ಅಪ್",
     continue: "ಮುಂದುವರಿಸಿ",
-    register: "ನೋಂದಾಯಿಸಿ",
-    alreadyHaveAccount: "ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ?",
-    dontHaveAccount: "ಖಾತೆ ಇಲ್ಲವೇ?",
-    loginSuccess: "ಲಾಗ್ ಇನ್ ಯಶಸ್ವಿ! ಮರುನಿರ್ದೇಶಿಸಲಾಗುತ್ತಿದೆ...",
-    signupSuccess: "ನೋಂದಣಿ ಯಶಸ್ವಿ! ಮರುನಿರ್ದೇಶಿಸಲಾಗುತ್ತಿದೆ...",
-    userNotFound: "ಬಳಕೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಸೈನ್ ಅಪ್ ಮಾಡಿ.",
-    mobileExists: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಈಗಾಗಲೇ ನೋಂದಾಯಿಸಲಾಗಿದೆ. ದಯವಿಟ್ಟು ಲಾಗ್ ಇನ್ ಮಾಡಿ.",
+    update: "ಅಪ್‌ಡೇಟ್ ಮಾಡಿ",
     selectLanguage: "ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ",
-    fillAllFields: "ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ",
-    invalidMobile: "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ 10-ಅಂಕಿಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+    loginPage: {
+        login: "ಲಾಗ್ ಇನ್",
+        signup: "ಸೈನ್ ಅಪ್",
+        register: "ನೋಂದಾಯಿಸಿ",
+        loginDescription: "ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ವಿವರಗಳನ್ನು ಒದಗಿಸಿ.",
+        mobileNumber: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+        firstName: "ಮೊದಲ ಹೆಸರು",
+        lastName: "ಕೊನೆಯ ಹೆಸರು",
+        selectState: "ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ",
+        selectDistrict: "ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ",
+        selectTaluka: "ತಾಲ್ಲೂಕು ಆಯ್ಕೆಮಾಡಿ",
+        selectVillage: "ಗ್ರಾಮ ಆಯ್ಕೆಮಾಡಿ",
+        alreadyHaveAccount: "ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ?",
+        dontHaveAccount: "ಖಾತೆ ಇಲ್ಲವೇ?",
+        fillAllFields: "ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ",
+        invalidMobile: "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ 10-ಅಂಕಿಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+        invalidOtp: "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ 6-ಅಂಕಿಯ ಒಟಿಪಿ ನಮೂದಿಸಿ.",
+        sendOtp: "ಒಟಿಪಿ ಕಳುಹಿಸಿ",
+        sendingOtp: "ಒಟಿಪಿ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ...",
+        verifyOtp: "ಒಟಿಪಿ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಲಾಗಿನ್ ಮಾಡಿ",
+        verifying: "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ...",
+        registering: "ನೋಂದಾಯಿಸಲಾಗುತ್ತಿದೆ...",
+        changeMobile: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಬದಲಾಯಿಸಿ",
+        otpSentTo: (mobileNumber) => `+91 ${mobileNumber} ಗೆ ಕಳುಹಿಸಲಾದ ಒಟಿಪಿ ನಮೂದಿಸಿ`,
+        loginSuccess: "ಲಾಗ್ ಇನ್ ಯಶಸ್ವಿ! ಮರುನಿರ್ದೇಶಿಸಲಾಗುತ್ತಿದೆ...",
+        signupSuccess: "ನೋಂದಣಿ ಯಶಸ್ವಿ! ಮರುನಿರ್ದೇಶಿಸಲಾಗುತ್ತಿದೆ...",
+        userNotFound: "ಬಳಕೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಸೈನ್ ಅಪ್ ಮಾಡಿ.",
+        mobileExists: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಈಗಾಗಲೇ ನೋಂದಾಯಿಸಲಾಗಿದೆ. ದಯವಿಟ್ಟು ಲಾಗ್ ಇನ್ ಮಾಡಿ.",
+        toastOtpSentTitle: "ಒಟಿಪಿ ಕಳುಹಿಸಲಾಗಿದೆ",
+        toastOtpSentDesc: "ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಗೆ ಒಟಿಪಿ ಕಳುಹಿಸಲಾಗಿದೆ.",
+    },
     menu: {
       home: "ಮುಖಪುಟ",
       profile: "ನನ್ನ ಪ್ರೊಫೈಲ್",
@@ -1172,15 +1271,6 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       insurance: "ಬೆಳೆ ವಿಮೆ",
       insuranceDesc: "ವಿಮೆಯೊಂದಿಗೆ ನಿಮ್ಮ ಬೆಳೆಗಳನ್ನು ರಕ್ಷಿಸಿ",
     },
-    loginDescription: "ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ವಿವರಗಳನ್ನು ಒದಗಿಸಿ.",
-    mobileNumber: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
-    firstName: "ಮೊದಲ ಹೆಸರು",
-    lastName: "ಕೊನೆಯ ಹೆಸರು",
-    selectState: "ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ",
-    selectDistrict: "ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ",
-    selectTaluka: "ತಾಲ್ಲೂಕು ಆಯ್ಕೆಮಾಡಿ",
-    selectVillage: "ಗ್ರಾಮ ಆಯ್ಕೆಮಾಡಿ",
-    update: "ಅಪ್‌ಡೇಟ್ ಮಾಡಿ",
     dashboard: {
       title: "ಕೃಷಿಮಿತ್ರ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
       welcome: "ಮತ್ತೆ ಸ್ವಾಗತ",
@@ -1203,8 +1293,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         governmentSchemesDesc: "ರೈತರಿಗೆ ಹೊಸ ಯೋಜನೆಗಳು ಮತ್ತು ಸಬ್ಸಿಡಿಗಳನ್ನು ಅನ್ವೇಷಿಸಿ.",
       },
       advisories: [
-        { title: "ಹತ್ತಿ ಕಾಯಿ ಕೊರಕ ಎಚ್ಚರಿಕೆ", description: "ನಿಮ್ಮ ಹತ್ತಿ ಬೆಳೆಗಳಲ್ಲಿ ಆರಂಭಿಕ ಚಿಹ್ನೆಗಳಿಗಾಗಿ ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಿ", time: "2 ಗಂಟೆಗಳ ಹಿಂದೆ", priority: "high" },
-        { title: "ಗೊಬ್ಬರ ಅನ್ವಯ", description: "ಸಾರಜನಕ ಅನ್ವಯಕ್ಕೆ ಉತ್ತಮ ಸಮಯ", time: "1 ದಿನದ ಹಿಂದೆ", priority: "medium" },
+        { title: "ಸ್ವಾಗತ!", description: "ಹೊಸ ಸಲಹೆಗಳಿಲ್ಲ. ಪ್ರಾರಂಭಿಸಲು ಬೆಳೆಯನ್ನು ಪತ್ತೆಹಚ್ಚಲು ಪ್ರಯತ್ನಿಸಿ.", time: "ಈಗ ತಾನೆ", priority: "low" },
       ],
       weather: { 
         temp: "28°C", 
@@ -1237,6 +1326,10 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       title: "ಅಧಿಸೂಚನೆಗಳು",
       markAllAsRead: "ಎಲ್ಲವನ್ನೂ ಓದಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ",
       noNotifications: "ಯಾವುದೇ ಹೊಸ ಅಧಿಸೂಚನೆಗಳಿಲ್ಲ",
+      samples: {
+        highWinds: { title: "ಹೆಚ್ಚಿನ ಗಾಳಿ ಎಚ್ಚರಿಕೆ", description: "ನಾಳೆ ಬೆಳಿಗ್ಗೆ ಬಲವಾದ ಗಾಳಿ ನಿರೀಕ್ಷಿಸಲಾಗಿದೆ. ಯುವ ಸಸ್ಯಗಳನ್ನು ಸುರಕ್ಷಿತಗೊಳಿಸಿ." },
+        cottonPrices: { title: "ಹತ್ತಿ ಬೆಲೆ ಏರಿಕೆ", description: "ಮುಂಬೈ ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಹತ್ತಿ ಬೆಲೆ 3% ರಷ್ಟು ಹೆಚ್ಚಾಗಿದೆ." },
+      },
     },
     supportSection: {
       title: "24/7 ರೈತರ ಬೆಂಬಲ",
@@ -1255,19 +1348,40 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
     getStarted: "தொடங்குங்கள்",
     exploreFeatures: "அம்சங்களை ஆராயவும்",
     logout: "வெளியேறு",
-    login: "உள்நுழை",
-    signup: "பதிவுசெய்",
     continue: "தொடரவும்",
-    register: "பதிவுசெய்",
-    alreadyHaveAccount: "ஏற்கனவே கணக்கு உள்ளதா?",
-    dontHaveAccount: "கணக்கு இல்லையா?",
-    loginSuccess: "உள்நுழைவு வெற்றிகரம்! திருப்பி விடப்படுகிறது...",
-    signupSuccess: "பதிவு வெற்றிகரம்! திருப்பி விடப்படுகிறது...",
-    userNotFound: "பயனர் காணப்படவில்லை. பதிவு செய்யவும்.",
-    mobileExists: "மொபைல் எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது. உள்நுழையவும்.",
+    update: "புதுப்பிக்கவும்",
     selectLanguage: "மொழியைத் தேர்ந்தெடுக்கவும்",
-    fillAllFields: "அனைத்து புலங்களையும் நிரப்பவும்",
-    invalidMobile: "சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்",
+    loginPage: {
+        login: "உள்நுழை",
+        signup: "பதிவுசெய்",
+        register: "பதிவுசெய்",
+        loginDescription: "தொடங்குவதற்கு உங்கள் விவரங்களை வழங்கவும்.",
+        mobileNumber: "கைபேசி எண்",
+        firstName: "முதல் பெயர்",
+        lastName: "கடைசி பெயர்",
+        selectState: "மாநிலத்தைத் தேர்ந்தெடுக்கவும்",
+        selectDistrict: "மாவட்டத்தைத் தேர்ந்தெடுக்கவும்",
+        selectTaluka: "வட்டத்தைத் தேர்ந்தெடுக்கவும்",
+        selectVillage: "கிராமத்தைத் தேர்ந்தெடுக்கவும்",
+        alreadyHaveAccount: "ஏற்கனவே கணக்கு உள்ளதா?",
+        dontHaveAccount: "கணக்கு இல்லையா?",
+        fillAllFields: "அனைத்து புலங்களையும் நிரப்பவும்",
+        invalidMobile: "சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்",
+        invalidOtp: "தயவுசெய்து சரியான 6 இலக்க OTP ஐ உள்ளிடவும்.",
+        sendOtp: "OTP அனுப்பு",
+        sendingOtp: "OTP அனுப்பப்படுகிறது...",
+        verifyOtp: "OTP ஐ சரிபார்த்து உள்நுழையவும்",
+        verifying: "சரிபார்க்கப்படுகிறது...",
+        registering: "பதிவு செய்யப்படுகிறது...",
+        changeMobile: "மொபைல் எண்ணை மாற்றவும்",
+        otpSentTo: (mobileNumber) => `+91 ${mobileNumber} க்கு அனுப்பப்பட்ட OTP ஐ உள்ளிடவும்`,
+        loginSuccess: "உள்நுழைவு வெற்றிகரம்! திருப்பி விடப்படுகிறது...",
+        signupSuccess: "பதிவு வெற்றிகரம்! திருப்பி விடப்படுகிறது...",
+        userNotFound: "பயனர் காணப்படவில்லை. பதிவு செய்யவும்.",
+        mobileExists: "மொபைல் எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது. உள்நுழையவும்.",
+        toastOtpSentTitle: "OTP அனுப்பப்பட்டது",
+        toastOtpSentDesc: "உங்கள் மொபைல் எண்ணுக்கு ஒரு OTP அனுப்பப்பட்டுள்ளது.",
+    },
     menu: {
       home: "முகப்பு",
       profile: "எனது சுயவிவரம்",
@@ -1372,15 +1486,6 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       insurance: "பயிர் காப்பீடு",
       insuranceDesc: "காப்பீட்டுடன் உங்கள் பயிர்களைப் பாதுகாக்கவும்",
     },
-    loginDescription: "தொடங்குவதற்கு உங்கள் விவரங்களை வழங்கவும்.",
-    mobileNumber: "கைபேசி எண்",
-    firstName: "முதல் பெயர்",
-    lastName: "கடைசி பெயர்",
-    selectState: "மாநிலத்தைத் தேர்ந்தெடுக்கவும்",
-    selectDistrict: "மாவட்டத்தைத் தேர்ந்தெடுக்கவும்",
-    selectTaluka: "வட்டத்தைத் தேர்ந்தெடுக்கவும்",
-    selectVillage: "கிராமத்தைத் தேர்ந்தெடுக்கவும்",
-    update: "புதுப்பிக்கவும்",
     dashboard: {
       title: "கிருஷிமித்ரா டாஷ்போர்டு",
       welcome: "மீண்டும் வரவேற்கிறோம்",
@@ -1403,8 +1508,7 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
         governmentSchemesDesc: "விவசாயிகளுக்கு புதிய திட்டங்கள் மற்றும் மானியங்களை ஆராயவும்.",
       },
       advisories: [
-        { title: "பருத்தி காய் புழு எச்சரிக்கை", description: "பருத்தி பயிர்களில் ஆரம்ப அறிகுறிகளுக்கு கண்காணிக்கவும்", time: "2 மணிநேரத்திற்கு முன்", priority: "high" },
-        { title: "உர பயன்பாடு", description: "நைட்ரஜன் பயன்பாட்டிற்கு சிறந்த நேரம்", time: "1 நாளுக்கு முன்", priority: "medium" },
+        { title: "வரவேற்கிறோம்!", description: "புதிய ஆலோசனைகள் இல்லை. தொடங்குவதற்கு ஒரு பயிரை கண்டறிய முயற்சிக்கவும்.", time: "இப்போது", priority: "low" },
       ],
       weather: { 
         temp: "28°C", 
@@ -1437,6 +1541,10 @@ const globalTranslations: Record<Language, GlobalTranslations> = {
       title: "அறிவிப்புகள்",
       markAllAsRead: "அனைத்தையும் படித்ததாக குறிக்கவும்",
       noNotifications: "புதிய அறிவிப்புகள் இல்லை",
+      samples: {
+        highWinds: { title: "அதிக காற்று எச்சரிக்கை", description: "நாளை காலை பலத்த காற்று எதிர்பார்க்கப்படுகிறது. இளம் பயிர்களைப் பாதுகாக்கவும்." },
+        cottonPrices: { title: "பருத்தி விலை உயர்வு", description: "மும்பை சந்தையில் பருத்தி விலை 3% அதிகரித்துள்ளது." },
+      },
     },
     supportSection: {
       title: "24/7 விவசாயி ஆதரவு",

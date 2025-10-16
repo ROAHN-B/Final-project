@@ -126,7 +126,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     if (!validateMobileNumber(mobileNumber)) {
-      setError(t.invalidMobile || "Please enter a valid 10-digit mobile number");
+      setError(t.loginPage.invalidMobile);
       return;
     }
 
@@ -141,18 +141,16 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        // *** NEW LOGIC HERE ***
-        // If the user is not found, switch to the sign-up form.
         if (response.status === 404) {
           setError(data.error);
-          setIsSignUp(true); // Switch UI to signup mode
-          setStep("mobile");   // Keep them on the form page
+          setIsSignUp(true);
+          setStep("mobile");
           return;
         }
         throw new Error(data.error || "Failed to send OTP.");
       }
 
-      toast({ title: "OTP Sent", description: "An OTP has been sent to your mobile number." });
+      toast({ title: t.loginPage.toastOtpSentTitle, description: t.loginPage.toastOtpSentDesc });
       setStep("otp");
     } catch (err: any) {
       setError(err.message);
@@ -165,7 +163,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     if (otp.length !== 6) {
-      setError("Please enter a valid 6-digit OTP.");
+      setError(t.loginPage.invalidOtp);
       return;
     }
 
@@ -181,7 +179,7 @@ export default function LoginPage() {
       if (!response.ok) throw new Error(data.error || "Login failed.");
 
       login(mapDbUserToAppUser(data));
-      toast({ title: t.loginSuccess || "Login successful!" });
+      toast({ title: t.loginPage.loginSuccess });
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -193,11 +191,11 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     if (!firstName || !lastName || !mobileNumber || !selectedState || !selectedDistrict || !selectedTaluka || !selectedVillage || !selectedLanguage) {
-      setError(t.fillAllFields || "Please fill all fields");
+      setError(t.loginPage.fillAllFields);
       return;
     }
     if (!validateMobileNumber(mobileNumber)) {
-      setError(t.invalidMobile || "Please enter a valid 10-digit mobile number");
+      setError(t.loginPage.invalidMobile);
       return;
     }
 
@@ -224,7 +222,7 @@ export default function LoginPage() {
 
       setCurrentLang(selectedLanguage);
       register(mapDbUserToAppUser(data));
-      toast({ title: t.signupSuccess || "Registration successful!" });
+      toast({ title: t.loginPage.signupSuccess });
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -254,10 +252,10 @@ export default function LoginPage() {
           </div>
           <div className="space-y-2">
             <CardTitle className="text-3xl md:text-4xl font-bold gradient-text text-balance">
-              {isSignUp ? t.signup : t.login}
+              {isSignUp ? t.loginPage.signup : t.loginPage.login}
             </CardTitle>
             <CardDescription className="text-lg text-muted-foreground text-pretty max-w-md mx-auto">
-              {t.loginDescription || "Please provide your details to get started with smart farming."}
+              {t.loginPage.loginDescription}
             </CardDescription>
           </div>
         </CardHeader>
@@ -272,25 +270,24 @@ export default function LoginPage() {
 
           {isSignUp ? (
             <form onSubmit={handleSignUp} className="space-y-6">
-              {/* ... (Your full sign-up form JSX remains unchanged here) ... */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-3">
                   <Label htmlFor="firstName" className="text-base font-semibold">
-                    {t.firstName}
+                    {t.loginPage.firstName}
                   </Label>
-                  <Input id="firstName" placeholder={t.firstName} value={firstName} onChange={(e) => setFirstName(e.target.value)} className="h-12 text-base rounded-xl border-2 focus:border-primary" required />
+                  <Input id="firstName" placeholder={t.loginPage.firstName} value={firstName} onChange={(e) => setFirstName(e.target.value)} className="h-12 text-base rounded-xl border-2 focus:border-primary" required />
                 </div>
                 <div className="space-y-3">
                   <Label htmlFor="lastName" className="text-base font-semibold">
-                    {t.lastName}
+                    {t.loginPage.lastName}
                   </Label>
-                  <Input id="lastName" placeholder={t.lastName} value={lastName} onChange={(e) => setLastName(e.target.value)} className="h-12 text-base rounded-xl border-2 focus:border-primary" required />
+                  <Input id="lastName" placeholder={t.loginPage.lastName} value={lastName} onChange={(e) => setLastName(e.target.value)} className="h-12 text-base rounded-xl border-2 focus:border-primary" required />
                 </div>
               </div>
 
               <div className="space-y-3">
                 <Label htmlFor="mobileNumber" className="text-base font-semibold">
-                  {t.mobileNumber}
+                  {t.loginPage.mobileNumber}
                 </Label>
                 <Input id="mobileNumber" type="tel" placeholder="9876543210" value={mobileNumber} onChange={handleMobileNumberChange} maxLength={10} className="h-12 text-base rounded-xl border-2 focus:border-primary" required />
               </div>
@@ -316,11 +313,11 @@ export default function LoginPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-3">
-                  <Label htmlFor="state" className="text-base font-semibold">{t.selectState}</Label>
+                  <Label htmlFor="state" className="text-base font-semibold">{t.loginPage.selectState}</Label>
                   <Select value={selectedState} onValueChange={setSelectedState}>
                     <SelectTrigger className="h-12 text-base rounded-xl border-2">
                       <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
-                      <SelectValue placeholder={t.selectState} />
+                      <SelectValue placeholder={t.loginPage.selectState} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       {Object.entries(locationData).map(([code, data]) => (<SelectItem key={code} value={code} className="text-base py-3">{data.name}</SelectItem>))}
@@ -328,11 +325,11 @@ export default function LoginPage() {
                   </Select>
                 </div>
                 <div className="space-y-3">
-                  <Label htmlFor="district" className="text-base font-semibold">{t.selectDistrict}</Label>
+                  <Label htmlFor="district" className="text-base font-semibold">{t.loginPage.selectDistrict}</Label>
                   <Select value={selectedDistrict} onValueChange={setSelectedDistrict} disabled={!selectedState}>
                     <SelectTrigger className="h-12 text-base rounded-xl border-2">
                       <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
-                      <SelectValue placeholder={t.selectDistrict} />
+                      <SelectValue placeholder={t.loginPage.selectDistrict} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       {getDistricts().map((district) => (<SelectItem key={district} value={district} className="text-base py-3">{district}</SelectItem>))}
@@ -342,11 +339,11 @@ export default function LoginPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-3">
-                  <Label htmlFor="taluka" className="text-base font-semibold">{t.selectTaluka}</Label>
+                  <Label htmlFor="taluka" className="text-base font-semibold">{t.loginPage.selectTaluka}</Label>
                   <Select value={selectedTaluka} onValueChange={setSelectedTaluka} disabled={!selectedDistrict}>
                     <SelectTrigger className="h-12 text-base rounded-xl border-2">
                       <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
-                      <SelectValue placeholder={t.selectTaluka} />
+                      <SelectValue placeholder={t.loginPage.selectTaluka} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       {getTalukas().map((taluka) => (<SelectItem key={taluka} value={taluka} className="text-base py-3">{taluka}</SelectItem>))}
@@ -354,11 +351,11 @@ export default function LoginPage() {
                   </Select>
                 </div>
                 <div className="space-y-3">
-                  <Label htmlFor="village" className="text-base font-semibold">{t.selectVillage}</Label>
+                  <Label htmlFor="village" className="text-base font-semibold">{t.loginPage.selectVillage}</Label>
                   <Select value={selectedVillage} onValueChange={setSelectedVillage} disabled={!selectedTaluka}>
                     <SelectTrigger className="h-12 text-base rounded-xl border-2">
                       <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
-                      <SelectValue placeholder={t.selectVillage} />
+                      <SelectValue placeholder={t.loginPage.selectVillage} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       {getVillages().map((village) => (<SelectItem key={village} value={village} className="text-base py-3">{village}</SelectItem>))}
@@ -369,13 +366,13 @@ export default function LoginPage() {
 
               <Button type="submit" className="w-full h-14 text-lg font-semibold rounded-2xl" disabled={isLoading}>
                 {isLoading ? <LoadingSpinner size="sm" /> : <UserPlus className="mr-3 h-5 w-5" />}
-                {isLoading ? "Registering..." : t.register}
+                {isLoading ? t.loginPage.registering : t.loginPage.register}
               </Button>
               <div className="text-center pt-4">
                 <p className="text-base text-muted-foreground">
-                  {t.alreadyHaveAccount}{" "}
+                  {t.loginPage.alreadyHaveAccount}{" "}
                   <Button variant="link" onClick={() => { setIsSignUp(false); setError(null); }} className="p-0 h-auto text-base font-semibold text-primary hover:text-primary/80">
-                    {t.login}
+                    {t.loginPage.login}
                   </Button>
                 </p>
               </div>
@@ -383,18 +380,18 @@ export default function LoginPage() {
           ) : step === "mobile" ? (
             <form onSubmit={handleSendOtp} className="space-y-8">
               <div className="space-y-3">
-                <Label htmlFor="mobileNumber" className="text-base font-semibold">{t.mobileNumber}</Label>
+                <Label htmlFor="mobileNumber" className="text-base font-semibold">{t.loginPage.mobileNumber}</Label>
                 <Input id="mobileNumber" type="tel" placeholder="9876543210" value={mobileNumber} onChange={handleMobileNumberChange} maxLength={10} className="h-12 text-base rounded-xl" required />
               </div>
               <Button type="submit" className="w-full h-14 text-lg font-semibold rounded-2xl" disabled={isLoading}>
                 {isLoading ? <LoadingSpinner size="sm" /> : <LogIn className="mr-3 h-5 w-5" />}
-                {isLoading ? "Sending OTP..." : "Send OTP"}
+                {isLoading ? t.loginPage.sendingOtp : t.loginPage.sendOtp}
               </Button>
               <div className="text-center pt-4">
                 <p className="text-base text-muted-foreground">
-                  {t.dontHaveAccount}{" "}
+                  {t.loginPage.dontHaveAccount}{" "}
                   <Button variant="link" onClick={() => { setIsSignUp(true); setError(null); }} className="p-0 h-auto text-base font-semibold text-primary">
-                    {t.signup}
+                    {t.loginPage.signup}
                   </Button>
                 </p>
               </div>
@@ -403,7 +400,7 @@ export default function LoginPage() {
             <form onSubmit={handleVerifyOtp} className="space-y-8">
               <div className="space-y-3 flex flex-col items-center">
                 <Label htmlFor="otp" className="text-base font-semibold text-center">
-                  Enter OTP sent to +91 {mobileNumber}
+                  {t.loginPage.otpSentTo(mobileNumber)}
                 </Label>
                 <InputOTP maxLength={6} value={otp} onChange={setOtp}>
                   <InputOTPGroup>
@@ -414,11 +411,11 @@ export default function LoginPage() {
               </div>
               <Button type="submit" className="w-full h-14 text-lg font-semibold rounded-2xl" disabled={isLoading}>
                 {isLoading ? <LoadingSpinner size="sm" /> : <LogIn className="mr-3 h-5 w-5" />}
-                {isLoading ? "Verifying..." : "Verify OTP & Login"}
+                {isLoading ? t.loginPage.verifying : t.loginPage.verifyOtp}
               </Button>
               <div className="text-center pt-4">
                 <Button variant="link" onClick={() => { setStep("mobile"); setError(null); setOtp(""); }} className="text-base">
-                  Change Mobile Number
+                  {t.loginPage.changeMobile}
                 </Button>
               </div>
             </form>

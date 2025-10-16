@@ -13,10 +13,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useAdvisory } from "@/contexts/AdvisoryContext"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/contexts/language-context" // Import the useLanguage hook
 
 export function NotificationBell() {
   const { notifications, markAsRead, markAllAsRead } = useAdvisory();
+  const { translations } = useLanguage(); // Get translations
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  const t = translations.notifications; // Use the notifications part of the translations
 
   return (
     <DropdownMenu>
@@ -38,11 +42,11 @@ export function NotificationBell() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80 md:w-96 glass-effect border-border shadow-lg rounded-2xl">
         <div className="p-3 flex items-center justify-between">
-            <DropdownMenuLabel className="text-base font-semibold text-foreground">Notifications</DropdownMenuLabel>
+            <DropdownMenuLabel className="text-base font-semibold text-foreground">{t.title}</DropdownMenuLabel>
             {unreadCount > 0 && (
                 <button onClick={(e) => { e.stopPropagation(); markAllAsRead(); }} className="text-xs text-primary hover:underline font-medium flex items-center gap-1">
                     <CheckCheck className="h-3 w-3" />
-                    Mark all as read
+                    {t.markAllAsRead}
                 </button>
             )}
         </div>
@@ -63,7 +67,7 @@ export function NotificationBell() {
                 </DropdownMenuItem>
               ))
             ) : (
-              <p className="p-8 text-sm text-muted-foreground text-center">No new notifications</p>
+              <p className="p-8 text-sm text-muted-foreground text-center">{t.noNotifications}</p>
             )}
         </div>
       </DropdownMenuContent>
