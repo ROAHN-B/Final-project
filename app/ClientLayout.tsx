@@ -65,9 +65,9 @@ export default function ClientLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // Fix service worker registration with error handling
+  // Fix service worker registration to only run in production
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
+    if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
           .then(function(registration) {
